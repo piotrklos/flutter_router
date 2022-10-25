@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../app_router/context_extension.dart';
 
 class MessagesPage extends StatelessWidget {
-  const MessagesPage({super.key});
+  const MessagesPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

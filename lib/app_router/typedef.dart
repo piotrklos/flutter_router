@@ -35,17 +35,14 @@ typedef AppRouteProvidersBuilder = T?
     Function<T extends AppRouterBlocProvider>();
 
 typedef AppRouterRedirect = FutureOr<String?> Function(
-  BuildContext context,
   AppRouterPageState state,
 );
 
 typedef AppRouterSkip = FutureOr<SkipOption?> Function(
-  BuildContext context,
   AppRouterPageState state,
 );
 
 typedef AppRouteRedirectorFunction = FutureOr<RouterPaths> Function(
-  BuildContext,
   FutureOr<RouterPaths>,
   RouteFinder, {
   List<RouterPaths>? redirectHistory,

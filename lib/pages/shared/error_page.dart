@@ -5,8 +5,8 @@ class ErrorPage extends StatelessWidget {
 
   const ErrorPage({
     this.message,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

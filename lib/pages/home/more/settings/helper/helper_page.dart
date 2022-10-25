@@ -12,9 +12,9 @@ import '../../../../../bloc/settings/settings_state.dart';
 class HelperPage extends StatelessWidget {
   final String? initText;
   const HelperPage({
-    super.key,
     this.initText,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

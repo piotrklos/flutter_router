@@ -14,9 +14,7 @@ import 'router_redirection.dart';
 import 'router_skipper.dart';
 import 'typedef.dart';
 
-class AppRouter extends ChangeNotifier
-    with NavigatorObserver
-    implements RouterConfig<RouterPaths> {
+class AppRouter extends ChangeNotifier with NavigatorObserver {
   late final AppRouteInformationParserWithRedirectionAndSkip
       _routeInformationParser;
   late final AppRouteInformationProvider _routeInformationProvider;
@@ -38,7 +36,7 @@ class AppRouter extends ChangeNotifier
     _configuration = AppRouterConfiguration(
       globalNavigatorKey: navigatorKey ?? GlobalKey<NavigatorState>(),
       topLevelRoutes: routes,
-      topRedirect: redirect ?? (_, __) => null,
+      topRedirect: redirect ?? (_) => null,
       redirectLimit: redirectLimit,
     );
 
@@ -72,18 +70,14 @@ class AppRouter extends ChangeNotifier
     );
   }
 
-  @override
   BackButtonDispatcher? get backButtonDispatcher => RootBackButtonDispatcher();
 
-  @override
-  RouteInformationParser<RouterPaths>? get routeInformationParser =>
+  RouteInformationParser<RouterPaths> get routeInformationParser =>
       _routeInformationParser;
 
-  @override
   RouteInformationProvider? get routeInformationProvider =>
       _routeInformationProvider;
 
-  @override
   RouterDelegate<RouterPaths> get routerDelegate => _routerDelegate;
 
   String? get currentLocation =>

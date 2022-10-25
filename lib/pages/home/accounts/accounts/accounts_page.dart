@@ -8,9 +8,9 @@ class AccountsPage extends StatelessWidget {
   final String? familyName;
 
   const AccountsPage({
-    super.key,
     required this.familyName,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

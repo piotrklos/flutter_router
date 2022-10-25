@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class SharedObject {
   final String message;
 
@@ -12,8 +11,8 @@ class SharedPage extends StatelessWidget {
 
   const SharedPage({
     required this.sharedObject,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

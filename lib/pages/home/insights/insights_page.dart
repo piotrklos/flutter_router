@@ -4,7 +4,9 @@ import '../../../app_router/context_extension.dart';
 import '../../shared/shared_page.dart';
 
 class InsightsPage extends StatelessWidget {
-  const InsightsPage({super.key});
+  const InsightsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,7 @@ class AppRouteInformationProvider extends RouteInformationProvider
     _refreshListenable?.addListener(notifyListeners);
   }
 
-  WidgetsBinding get _binding => WidgetsBinding.instance;
+  WidgetsBinding? get _binding => WidgetsBinding.instance;
 
   /// value
   RouteInformation _value;
@@ -50,7 +50,7 @@ class AppRouteInformationProvider extends RouteInformationProvider
   @override
   void addListener(VoidCallback listener) {
     if (!hasListeners) {
-      _binding.addObserver(this);
+      _binding?.addObserver(this);
     }
     super.addListener(listener);
   }
@@ -59,7 +59,7 @@ class AppRouteInformationProvider extends RouteInformationProvider
   void removeListener(VoidCallback listener) {
     super.removeListener(listener);
     if (!hasListeners) {
-      _binding.removeObserver(this);
+      _binding?.removeObserver(this);
     }
   }
 
@@ -80,7 +80,7 @@ class AppRouteInformationProvider extends RouteInformationProvider
   @override
   void dispose() {
     if (hasListeners) {
-      _binding.removeObserver(this);
+      _binding?.removeObserver(this);
     }
     _refreshListenable?.removeListener(notifyListeners);
     super.dispose();

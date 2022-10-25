@@ -79,11 +79,16 @@ class _NoTransitionPage<T> extends Page<T> {
 
   const _NoTransitionPage({
     required this.child,
-    super.key,
-    super.name,
-    super.arguments,
-    super.restorationId,
-  });
+    LocalKey? key,
+    String? name,
+    Object? arguments,
+    String? restorationId,
+  }) : super(
+          arguments: arguments,
+          key: key,
+          name: name,
+          restorationId: restorationId,
+        );
 
   @override
   Route<T> createRoute(BuildContext context) => _NoTransitionPageRoute<T>(this);

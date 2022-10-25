@@ -9,7 +9,9 @@ import '../../../../bloc/settings/settings_bloc.dart';
 import '../../../../bloc/settings/settings_state.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

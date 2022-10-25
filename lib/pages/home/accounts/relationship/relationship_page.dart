@@ -12,8 +12,8 @@ class RelationshipPage extends StatelessWidget {
   ];
 
   const RelationshipPage({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

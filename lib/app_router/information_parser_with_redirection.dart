@@ -20,44 +20,11 @@ class AppRouteInformationParserWithRedirection
     this.appRouterRedirector,
   );
 
-  @override
   Future<RouterPaths> parseRouteInformationWithDependencies(
     RouteInformation routeInformation,
     BuildContext context,
   ) async {
-    late final RouterPaths routerPaths;
-    try {
-      RouterInformationStateObject? stateObject;
-      if (routeInformation.state is RouterInformationStateObject) {
-        stateObject = routeInformation.state as RouterInformationStateObject;
-      }
-
-      routerPaths = routeFinder.findForPath(
-        routeInformation.location!,
-        extra: stateObject != null ? stateObject.extra : routeInformation.state,
-        shouldBackToParent: stateObject?.backToParent ?? false,
-        parentStack: stateObject?.parentStack,
-        completer: stateObject?.completer,
-      );
-    } catch (_) {
-      routerPaths = RouterPaths.empty();
-    }
-
-    final FutureOr<RouterPaths> redirectorResult = appRouterRedirector.redirect(
-      context,
-      SynchronousFuture<RouterPaths>(routerPaths),
-      routeFinder,
-      extra: routeInformation.state,
-    );
-    if (redirectorResult is RouterPaths) {
-      return _processRedirectorResult(redirectorResult, routeInformation);
-    }
-
-    return redirectorResult.then(
-      (value) {
-        return _processRedirectorResult(value, routeInformation);
-      },
-    );
+    return parseRouteInformation(routeInformation);
   }
 
   Future<RouterPaths> _processRedirectorResult(
@@ -87,8 +54,37 @@ class AppRouteInformationParserWithRedirection
   Future<RouterPaths> parseRouteInformation(
     RouteInformation routeInformation,
   ) async {
-    throw UnimplementedError(
-      'use parseRouteInformationWithDependencies instead',
+    late final RouterPaths routerPaths;
+    try {
+      RouterInformationStateObject? stateObject;
+      if (routeInformation.state is RouterInformationStateObject) {
+        stateObject = routeInformation.state as RouterInformationStateObject;
+      }
+
+      routerPaths = routeFinder.findForPath(
+        routeInformation.location!,
+        extra: stateObject != null ? stateObject.extra : routeInformation.state,
+        shouldBackToParent: stateObject?.backToParent ?? false,
+        parentStack: stateObject?.parentStack,
+        completer: stateObject?.completer,
+      );
+    } catch (_) {
+      routerPaths = RouterPaths.empty();
+    }
+
+    final FutureOr<RouterPaths> redirectorResult = appRouterRedirector.redirect(
+      SynchronousFuture<RouterPaths>(routerPaths),
+      routeFinder,
+      extra: routeInformation.state,
+    );
+    if (redirectorResult is RouterPaths) {
+      return _processRedirectorResult(redirectorResult, routeInformation);
+    }
+
+    return redirectorResult.then(
+      (value) {
+        return _processRedirectorResult(value, routeInformation);
+      },
     );
   }
 

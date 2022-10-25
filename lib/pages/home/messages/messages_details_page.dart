@@ -10,7 +10,9 @@ import '../../../bloc/messages_details/messages_details_state.dart';
 import '../../../di/di.dart';
 
 class MessagesDetailsPage extends StatelessWidget {
-  const MessagesDetailsPage({super.key});
+  const MessagesDetailsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

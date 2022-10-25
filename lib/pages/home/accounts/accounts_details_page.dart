@@ -7,7 +7,9 @@ import '../../../bloc/accounts/accounts_state.dart';
 import '../../../bloc/details/details_bloc.dart';
 
 class AccountsDetailsPage extends StatelessWidget {
-  const AccountsDetailsPage({super.key});
+  const AccountsDetailsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

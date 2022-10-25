@@ -6,7 +6,9 @@ import '../../../bloc/more/more_bloc.dart';
 import '../../../bloc/more/more_state.dart';
 
 class MorePage extends StatelessWidget {
-  const MorePage({super.key});
+  const MorePage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -5,8 +5,8 @@ import '../../service/user_service.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

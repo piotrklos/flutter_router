@@ -14,7 +14,6 @@ class AppRouterRedirector {
   AppRouterRedirector(this.configuration);
 
   FutureOr<RouterPaths> redirect(
-    BuildContext context,
     FutureOr<RouterPaths> prevRouterPathsFuture,
     RouteFinder routeFinder, {
     List<RouterPaths>? redirectHistory,
@@ -23,7 +22,6 @@ class AppRouterRedirector {
     if (prevRouterPathsFuture is RouterPaths) {
       return _processRedirect(
         prevRouterPathsFuture,
-        context: context,
         extra: extra,
         routeFinder: routeFinder,
         redirectHistory: redirectHistory,
@@ -33,7 +31,6 @@ class AppRouterRedirector {
       (value) {
         return _processRedirect(
           value,
-          context: context,
           extra: extra,
           routeFinder: routeFinder,
           redirectHistory: redirectHistory,
@@ -44,14 +41,12 @@ class AppRouterRedirector {
 
   FutureOr<RouterPaths> _processRedirect(
     RouterPaths prevRouterPaths, {
-    required BuildContext context,
     required RouteFinder routeFinder,
     required List<RouterPaths>? redirectHistory,
     required Object? extra,
   }) {
     redirectHistory ??= <RouterPaths>[prevRouterPaths];
     final FutureOr<String?> topRedirectResult = configuration.topRedirect(
-      context,
       AppRouterPageState(
         name: null,
         fullpath: prevRouterPaths.location.toString(),
@@ -62,7 +57,6 @@ class AppRouterRedirector {
     if (topRedirectResult is String?) {
       return _processTopLevelRedirect(
         topRedirectResult,
-        context: context,
         extra: extra,
         prevRouterPaths: prevRouterPaths,
         redirectHistory: redirectHistory,
@@ -73,7 +67,6 @@ class AppRouterRedirector {
       (value) {
         return _processTopLevelRedirect(
           value,
-          context: context,
           extra: extra,
           prevRouterPaths: prevRouterPaths,
           redirectHistory: redirectHistory,
@@ -86,7 +79,6 @@ class AppRouterRedirector {
   FutureOr<RouterPaths> _processTopLevelRedirect(
     String? topRedirectLocation, {
     required RouterPaths prevRouterPaths,
-    required BuildContext context,
     required RouteFinder routeFinder,
     required List<RouterPaths>? redirectHistory,
     required Object? extra,
@@ -102,7 +94,6 @@ class AppRouterRedirector {
         return newRouterPaths;
       }
       return redirect(
-        context,
         newRouterPaths,
         routeFinder,
         redirectHistory: redirectHistory,
@@ -111,14 +102,12 @@ class AppRouterRedirector {
     }
 
     final FutureOr<String?> routeLevelRedirectResult = _getRouteLevelRedirect(
-      context,
       prevRouterPaths,
       0,
     );
     if (routeLevelRedirectResult is String?) {
       return _processRouteLevelRedirect(
         routeLevelRedirectResult,
-        context: context,
         extra: extra,
         prevRouterPaths: prevRouterPaths,
         redirectHistory: redirectHistory,
@@ -129,7 +118,6 @@ class AppRouterRedirector {
       (value) {
         return _processRouteLevelRedirect(
           value,
-          context: context,
           extra: extra,
           prevRouterPaths: prevRouterPaths,
           redirectHistory: redirectHistory,
@@ -142,7 +130,6 @@ class AppRouterRedirector {
   FutureOr<RouterPaths> _processRouteLevelRedirect(
     String? routeRedirectLocation, {
     required RouterPaths prevRouterPaths,
-    required BuildContext context,
     required RouteFinder routeFinder,
     required List<RouterPaths>? redirectHistory,
     required Object? extra,
@@ -159,7 +146,6 @@ class AppRouterRedirector {
         return newRouterPaths;
       }
       return redirect(
-        context,
         newRouterPaths,
         routeFinder,
         redirectHistory: redirectHistory,
@@ -170,7 +156,6 @@ class AppRouterRedirector {
   }
 
   FutureOr<String?> _getRouteLevelRedirect(
-    BuildContext context,
     RouterPaths routerPaths,
     int currentCheckIndex,
   ) {
@@ -184,7 +169,6 @@ class AppRouterRedirector {
     FutureOr<String?> processRouteRedirect(String? newLocation) =>
         newLocation ??
         _getRouteLevelRedirect(
-          context,
           routerPaths,
           currentCheckIndex + 1,
         );
@@ -192,7 +176,6 @@ class AppRouterRedirector {
     FutureOr<String?> routeRedirectResult;
     if (route is AppPageRoute && route.redirect != null) {
       routeRedirectResult = route.redirect!(
-        context,
         AppRouterPageState(
           name: route.name,
           fullpath: foundRoute.fullPath,

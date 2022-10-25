@@ -16,14 +16,17 @@ void main() async {
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
   const MyApp({
-    super.key,
     required this.appRouter,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: appRouter,
+      routeInformationParser: appRouter.routeInformationParser,
+      routerDelegate: appRouter.routerDelegate,
+      backButtonDispatcher: appRouter.backButtonDispatcher,
+      routeInformationProvider: appRouter.routeInformationProvider,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,

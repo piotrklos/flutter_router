@@ -15,14 +15,12 @@ class AppRouterSkipper {
   AppRouterSkipper(this.configuration);
 
   FutureOr<RouterPaths> skip(
-    BuildContext context,
     FutureOr<RouterPaths> routerPathsFuture,
     RouteFinder routeFinder,
   ) {
     if (routerPathsFuture is RouterPaths) {
       return _processSkip(
         routerPathsFuture,
-        context: context,
         routeFinder: routeFinder,
         index: routerPathsFuture.length - 1,
       );
@@ -31,7 +29,6 @@ class AppRouterSkipper {
       (value) {
         return _processSkip(
           value,
-          context: context,
           routeFinder: routeFinder,
           index: value.length - 1,
         );
@@ -41,7 +38,6 @@ class AppRouterSkipper {
 
   FutureOr<RouterPaths> _processSkip(
     RouterPaths routerPaths, {
-    required BuildContext context,
     required RouteFinder routeFinder,
     required int index,
   }) {
@@ -53,7 +49,6 @@ class AppRouterSkipper {
     }
 
     final FutureOr<SkipOption?> skipResult = _getSkipper(
-      context,
       routerPaths,
       index,
     );
@@ -61,7 +56,6 @@ class AppRouterSkipper {
     if (skipResult is SkipOption?) {
       return _processRouteLevelSkipper(
         skipResult,
-        context: context,
         routeFinder: routeFinder,
         routerPaths: routerPaths,
         index: index,
@@ -71,7 +65,6 @@ class AppRouterSkipper {
       (value) {
         return _processRouteLevelSkipper(
           value,
-          context: context,
           routeFinder: routeFinder,
           routerPaths: routerPaths,
           index: index,
@@ -83,7 +76,6 @@ class AppRouterSkipper {
   FutureOr<RouterPaths> _processRouteLevelSkipper(
     SkipOption? skipOption, {
     required RouterPaths routerPaths,
-    required BuildContext context,
     required RouteFinder routeFinder,
     required int index,
   }) {
@@ -97,21 +89,18 @@ class AppRouterSkipper {
 
       return _processSkip(
         newRouterPaths,
-        context: context,
         index: index - 1,
         routeFinder: routeFinder,
       );
     }
     return _processSkip(
       routerPaths,
-      context: context,
       index: index - 1,
       routeFinder: routeFinder,
     );
   }
 
   FutureOr<SkipOption?> _getSkipper(
-    BuildContext context,
     RouterPaths routerPaths,
     int index,
   ) {
@@ -123,7 +112,6 @@ class AppRouterSkipper {
     final route = foundRoute.route;
     if (route is AppPageRoute && route.skip != null) {
       routeSkipResult = route.skip!(
-        context,
         AppRouterPageState(
           name: route.name,
           fullpath: foundRoute.fullPath,

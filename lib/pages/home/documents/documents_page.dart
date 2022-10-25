@@ -4,7 +4,9 @@ import '../../../app_router/context_extension.dart';
 import '../../shared/shared_page.dart';
 
 class DocumentsPage extends StatelessWidget {
-  const DocumentsPage({super.key});
+  const DocumentsPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

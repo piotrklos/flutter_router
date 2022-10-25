@@ -4,10 +4,13 @@ import 'app_router.dart';
 
 class InheritedAppRouter extends InheritedWidget {
   const InheritedAppRouter({
-    required super.child,
+    required Widget child,
     required this.appRouter,
-    super.key,
-  });
+    Key? key,
+  }) : super(
+          child: child,
+          key: key,
+        );
 
   final AppRouter appRouter;
 

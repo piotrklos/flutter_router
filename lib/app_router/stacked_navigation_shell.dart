@@ -39,8 +39,8 @@ class StackedNavigationShell extends StatefulWidget {
     required this.currentRouterState,
     required this.stackItems,
     this.scaffoldBuilder,
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _StackedNavigationShellState();

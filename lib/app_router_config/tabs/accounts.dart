@@ -44,7 +44,7 @@ class AccountTabConfig {
     builder: (context, state) {
       return const RelationshipPage();
     },
-    skip: (context, state) async {
+    skip: (state) async {
       final userService = GetIt.instance.get<UserService>();
       final user = await userService.getUser();
       if (user.isIntrnal) {
