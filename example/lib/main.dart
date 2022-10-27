@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import 'app_router/interface/inherited_router.dart';
 import 'app_router/interface/router.dart';
@@ -6,7 +7,7 @@ import 'di/di.dart';
 
 void main() async {
   await initDependencies();
-  final routerInterface = getIt.get<PBAppRouter>();
+  final routerInterface = GetIt.instance.get<PBAppRouter>();
   await routerInterface.init();
   runApp(MyApp(
     routerInterface: routerInterface,

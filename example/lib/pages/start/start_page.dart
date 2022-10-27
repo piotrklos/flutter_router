@@ -34,8 +34,7 @@ class StartPage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 UserService.isInternal = false;
-                PBAppRouter.of(context).go("/relationship/accounts");
-                PBAppRouter.of(context).goNamed("accounts");
+                PBAppRouter.of(context).go("/relationship");
               },
               child: const Text("Login External user"),
             ),

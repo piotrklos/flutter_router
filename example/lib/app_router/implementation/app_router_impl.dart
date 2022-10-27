@@ -60,7 +60,7 @@ class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
     Object? extra,
     bool backToParent = false,
   }) {
-    return _appRouter.go(
+    return _appRouter.go<T>(
       location,
       backToParent: backToParent,
       extra: extra,
@@ -73,7 +73,7 @@ class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
     Object? extra,
     bool backToParent = false,
   }) {
-    return _appRouter.goNamed(
+    return _appRouter.goNamed<T>(
       name,
       backToParent: backToParent,
       extra: extra,
@@ -82,7 +82,7 @@ class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
 
   @override
   void pop<T extends Object?>([T? result]) {
-    return _appRouter.pop(result);
+    return _appRouter.pop<T>(result);
   }
 
   @override
@@ -90,7 +90,7 @@ class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
     String location, {
     Object? extra,
   }) {
-    return _appRouter.push(
+    return _appRouter.push<T>(
       location,
       extra: extra,
     );
