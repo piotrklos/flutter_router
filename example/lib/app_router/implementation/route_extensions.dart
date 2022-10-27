@@ -1,20 +1,18 @@
 import 'package:app_router/app_router.dart' as router;
+import 'package:flutter/material.dart';
 
 import '../../pages/home/tab_bar_page.dart';
 import '../interface/app_router_bloc_provider.dart';
 import '../interface/route.dart';
 import '../interface/tab_bar_item_state.dart';
 import 'mapper.dart';
-import 'route_impl.dart';
 
 extension IRouteExtension on IRoute {
   router.BaseAppRoute mapToBaseAppRoute() {
     if (this is PBPageRoute) {
       return (this as PBPageRoute).mapToBaseAppRoute();
     } else if (this is PBTabRoute) {
-      if (this is PBTabRouteWithDependencie) {
-        return (this as PBTabRouteWithDependencie).mapToBaseAppRoute();
-      }
+      return (this as PBTabRoute).mapToBaseAppRoute();
     }
     throw UnimplementedError("Not supported type!");
   }
@@ -59,7 +57,7 @@ extension PBPageRouteExtension on PBPageRoute {
   }
 }
 
-extension PBTabRouteExtension on PBTabRouteWithDependencie {
+extension PBTabRouteExtension on PBTabRoute {
   router.BaseAppRoute mapToBaseAppRoute() {
     return router.MultiShellRoute.stackedNavigationShell(
       routes: items
@@ -69,7 +67,7 @@ extension PBTabRouteExtension on PBTabRouteWithDependencie {
           .toList(),
       stackItems: items
           .map(
-            (e) => e._stackedNavigationItem(_dependenciesForTabRouteItem(e)),
+            (e) => e._stackedNavigationItem(e.blocsGetter),
           )
           .toList(),
       scaffoldBuilder: (context, currentIndex, itemsState, child) {
@@ -85,34 +83,21 @@ extension PBTabRouteExtension on PBTabRouteWithDependencie {
           tabRouteItems: items,
         );
       },
+      onDispose: () {
+        dispose();
+      },
     );
-  }
-
-  List<PBAppRouterBlocProvider> _dependenciesForTabRouteItem(
-    PBTabRouteItem item,
-  ) {
-    List<PBAppRouterBlocProvider> dependencies = [];
-
-    final dependenciesNames = dependenciesMap[item];
-    dependenciesNames?.forEach((dependency) {
-      final provider = dependenciesProvider[dependency];
-      if (provider != null) {
-        dependencies.add(provider);
-      }
-    });
-
-    return dependencies;
   }
 }
 
 extension PBTabRouteItemExtension on PBTabRouteItem {
   router.StackedNavigationItem _stackedNavigationItem(
-    List<PBAppRouterBlocProvider> providers,
+    ValueGetter<List<PBAppRouterBlocProvider>>? providers,
   ) {
     return router.StackedNavigationItem(
       rootRoutePath: baseRoute.fullpath,
       navigatorKey: navigatorKey,
-      providers: providers.map((e) => e.blocProvider).toList(),
+      providers: () => providers?.call().map((e) => e.blocProvider).toList() ?? [],
     );
   }
 }

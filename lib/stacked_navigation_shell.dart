@@ -7,12 +7,12 @@ import 'app_router.dart';
 class StackedNavigationItem {
   final String rootRoutePath;
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<BlocProvider<StateStreamableSource<Object?>>> providers;
+  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>? providers;
 
   StackedNavigationItem({
     required this.rootRoutePath,
     required this.navigatorKey,
-    this.providers = const [],
+    this.providers,
   });
 }
 
@@ -140,11 +140,12 @@ class _StackedNavigationShellState extends State<StackedNavigationShell>
     required Widget child,
     required StackedNavigationItemState navigationItem,
   }) {
-    if (navigationItem.item.providers.isEmpty) {
+    final providers = navigationItem.item.providers?.call() ?? [];
+    if (providers.isEmpty) {
       return child;
     }
     return MultiBlocProvider(
-      providers: navigationItem.item.providers,
+      providers: providers,
       child: child,
     );
   }

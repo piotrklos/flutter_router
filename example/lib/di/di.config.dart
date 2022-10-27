@@ -24,10 +24,10 @@ import '../service/user_service.dart'
 _i1.GetIt $initGetIt(_i1.GetIt get,
     {String? environment, _i2.EnvironmentFilter? environmentFilter}) {
   final gh = _i2.GetItHelper(get, environment, environmentFilter);
-  gh.factory<_i3.AccountsCubit>(() => _i3.AccountsCubit());
-  gh.factory<_i4.DetailsCubit>(() => _i4.DetailsCubit());
+  gh.lazySingleton<_i3.AccountsCubit>(() => _i3.AccountsCubit());
+  gh.lazySingleton<_i4.DetailsCubit>(() => _i4.DetailsCubit());
   gh.factory<_i5.HelperCubit>(() => _i5.HelperCubit());
-  gh.factory<_i6.MessagesCubit>(() => _i6.MessagesCubit());
+  gh.lazySingleton<_i6.MessagesCubit>(() => _i6.MessagesCubit());
   gh.factory<_i7.MessagesDetailsCubit>(() => _i7.MessagesDetailsCubit());
   gh.factory<_i8.MoreCubit>(() => _i8.MoreCubit());
   gh.factory<_i9.PBAppRouter<Object>>(() => _i10.AppRotuerImplementation());

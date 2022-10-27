@@ -1,4 +1,5 @@
 import 'package:app_router/app_router.dart';
+import 'package:app_router/route_finder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -8,10 +9,9 @@ import '../interface/router.dart';
 import '../routes/shared_routes.dart';
 import '../routes/tabs/tab_config.dart';
 import 'route_extensions.dart';
-import 'route_impl.dart';
 
 @Injectable(as: PBAppRouter)
-class AppRotuerImplementation implements PBAppRouter<Object> {
+class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
   static final _globalNavigationKey = GlobalKey<NavigatorState>();
 
   late final AppRouter _appRouter;
@@ -24,9 +24,7 @@ class AppRotuerImplementation implements PBAppRouter<Object> {
       navigatorKey: _globalNavigationKey,
       routes: [
         ...sharedRoutes.routes,
-        PBTabRouteWithDependencie(
-          items: tabConfig.tabRoute.items,
-        ),
+        tabConfig.tabRoute,
       ]
           .map(
             (e) => e.mapToBaseAppRoute(),
@@ -46,7 +44,7 @@ class AppRotuerImplementation implements PBAppRouter<Object> {
       _appRouter.backButtonDispatcher;
 
   @override
-  RouteInformationParser<Object> get routeInformationParser =>
+  RouteInformationParser<RouterPaths> get routeInformationParser =>
       _appRouter.routeInformationParser;
 
   @override
@@ -54,7 +52,7 @@ class AppRotuerImplementation implements PBAppRouter<Object> {
       _appRouter.routeInformationProvider;
 
   @override
-  RouterDelegate<Object> get routerDelegate => _appRouter.routerDelegate;
+  RouterDelegate<RouterPaths> get routerDelegate => _appRouter.routerDelegate;
 
   @override
   Future<T?> go<T extends Object?>(

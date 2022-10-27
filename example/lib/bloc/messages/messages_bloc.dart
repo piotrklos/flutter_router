@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../app_router/interface/app_router_bloc_provider.dart';
 import 'messages_state.dart';
 
-@Injectable()
+@LazySingleton()
 class MessagesCubit extends Cubit<MessagesState>
     with PBAppRouterBlocProvider<MessagesCubit> {
   MessagesCubit()

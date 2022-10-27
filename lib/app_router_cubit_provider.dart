@@ -83,8 +83,6 @@ class AppRouterCubitProvider {
       }
       if (route.location!.startsWith(baseAppRoute.path)) {
         toRemove.add(route);
-      } else if (!route.containsAnyCubitProviders) {
-        toRemove.add(route);
       }
     }
 
@@ -92,19 +90,18 @@ class AppRouterCubitProvider {
       return;
     }
 
-    final oldPageRoutes = toRemove
-        .map((e) => e.allRoutes)
-        .expand((e) => e)
-        .whereType<AppPageRoute>();
+    final oldRoutes =
+        toRemove.map((e) => e.allRoutes).expand((e) => e).toList();
 
     final allCurrentRoutes = _currentRouterPaths.allRoutes;
-    final oldPageToPop = oldPageRoutes
+    final oldRoutesToPop = oldRoutes
         .where(
           (route) => !allCurrentRoutes.contains(route),
         )
         .toList();
-    for (var route in oldPageToPop) {
-      route.onPop();
+
+    for (var route in oldRoutesToPop) {
+      route.dispose();
     }
 
     _previousRoutes.removeWhere((e) => toRemove.contains(e));

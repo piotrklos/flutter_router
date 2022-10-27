@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../bloc/accounts/accounts_bloc.dart';
 import '../../../../bloc/details/details_bloc.dart';
@@ -22,10 +23,18 @@ class AccountsTabConfig {
       iconData: Icons.people,
       name: "Accounts",
       navigatorKey: _navigatorKey,
-      cubits: const [
-        AccountsCubit,
-        DetailsCubit,
+      blocsGetter: () => [
+        GetIt.instance.get<AccountsCubit>(),
+        GetIt.instance.get<DetailsCubit>(),
       ],
+      onDispose: () {
+        onDispose();
+      },
     );
+  }
+
+  void onDispose() {
+    GetIt.instance.resetLazySingleton<AccountsCubit>();
+    GetIt.instance.resetLazySingleton<DetailsCubit>();
   }
 }

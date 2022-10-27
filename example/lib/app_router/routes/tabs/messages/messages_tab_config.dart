@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../../bloc/details/details_bloc.dart';
 import '../../../../bloc/messages/messages_bloc.dart';
@@ -22,10 +23,22 @@ class MessagesTabConfig {
       iconData: Icons.message,
       name: "Messages",
       navigatorKey: _navigatorKey,
-      cubits: const [
-        MessagesCubit,
-        DetailsCubit,
+      blocsGetter: () => [
+        GetIt.instance.get<MessagesCubit>(),
+        GetIt.instance.get<DetailsCubit>(),
       ],
+      onDispose: () {
+        onDispose();
+      },
+    );
+  }
+
+  void onDispose() {
+    GetIt.instance.resetLazySingleton<MessagesCubit>(
+      instance: GetIt.instance.get<MessagesCubit>(),
+    );
+    GetIt.instance.resetLazySingleton<DetailsCubit>(
+      instance: GetIt.instance.get<DetailsCubit>(),
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 import '../../app_router/interface/app_router_bloc_provider.dart';
 import 'accounts_state.dart';
 
-@Injectable()
+@LazySingleton()
 class AccountsCubit extends Cubit<AccountsState>
     with PBAppRouterBlocProvider<AccountsCubit> {
   AccountsCubit()

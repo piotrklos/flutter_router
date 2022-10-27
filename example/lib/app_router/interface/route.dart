@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_router_bloc_provider.dart';
 import 'typedef.dart';
@@ -43,6 +44,12 @@ class PBTabRoute extends IRoute {
   PBTabRoute({
     required this.items,
   });
+
+  void dispose() {
+    for (var item in items) {
+      item.onDispose?.call();
+    }
+  }
 }
 
 class PBPageRoute extends IRoute {
@@ -72,15 +79,17 @@ class PBTabRouteItem extends Equatable {
   final String name;
   final IconData iconData;
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<Object> cubitsTypes;
+  final ValueGetter<List<PBAppRouterBlocProvider>>? blocsGetter;
+  final VoidCallback? onDispose;
 
   const PBTabRouteItem({
     required this.baseRoute,
     required this.name,
     required this.iconData,
     required this.navigatorKey,
-    List<Object> cubits = const [],
-  }) : cubitsTypes = cubits;
+    this.blocsGetter,
+    this.onDispose,
+  });
 
   @override
   List<Object?> get props => [
@@ -88,6 +97,6 @@ class PBTabRouteItem extends Equatable {
         name,
         iconData,
         navigatorKey,
-        cubitsTypes,
+        blocsGetter,
       ];
 }
