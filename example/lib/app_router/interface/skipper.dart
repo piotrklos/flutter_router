@@ -1,0 +1,4 @@
+enum SkipOption {
+  goToChild,
+  goToParent,
+}
