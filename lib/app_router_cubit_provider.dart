@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'app_router_bloc_provider.dart';
 import 'route.dart';
 
@@ -5,13 +7,29 @@ import 'configuration.dart';
 import 'route_finder.dart';
 
 class AppRouterCubitProvider {
-  final AppRouterConfiguration routerConfig;
-  final List<AppRouterBlocProvider> currentProviders = [];
-
-  AppRouterCubitProvider(this.routerConfig);
+  // final AppRouterConfiguration routerConfig;
+  // final List<AppRouterBlocProvider> currentProviders = [];
+  // AppRouterCubitProvider(this.routerConfig);
+  final List<RouterPaths> _previousRoutes = [];
 
   RouterPaths _currentRouterPaths = RouterPaths.empty();
-  final List<RouterPaths> _previousRoutes = [];
+
+  @visibleForTesting
+  List<RouterPaths> get previousRoutes => _previousRoutes;
+
+  @visibleForTesting
+  RouterPaths get currentRouterPaths => _currentRouterPaths;
+
+  @visibleForTesting
+  void setCurrentRouterPaths(RouterPaths routerPaths) {
+    _currentRouterPaths = routerPaths;
+  }
+
+  @visibleForTesting
+  void setPreviousRoutes(List<RouterPaths> routerPathsList) {
+    _previousRoutes.clear();
+    _previousRoutes.addAll(routerPathsList);
+  }
 
   void restoreRouteInformation(RouterPaths routerPaths) {
     if (routerPaths == _currentRouterPaths) {
@@ -29,96 +47,122 @@ class AppRouterCubitProvider {
       _previousRoutes.add(_currentRouterPaths);
     }
     _currentRouterPaths = routerPaths.copy();
-    _setNewProviders();
+
+    if (_previousRoutes.isNotEmpty) {
+      removeUnusedProviders();
+    }
+    setNewProviders();
   }
 
-  void _setNewProviders() {
-    final commonRoutes = _commonRoutes();
-
-    /// new added routes
-    final newRoutes =
-        _currentRouterPaths.allRoutes.whereType<AppPageRoute>().toList()
-          ..removeWhere(
-            (e) => commonRoutes.contains(e),
-          );
-
-    /// remove unused cubit providers
-    _removeUnusedProviders();
-
-    for (var route in newRoutes) {
-      route.onPush(_currentRouterPaths.cubitGetter);
+  @visibleForTesting
+  void setNewProviders() {
+    for (var newRoute in _currentRouterPaths.allRoutes) {
+      if (newRoute is AppPageRoute) {
+        newRoute.onPush(_currentRouterPaths.cubitGetter);
+      }
     }
+    // final commonRoutesList = commonRoutes(
+    //   previousRoute: _previousRoutes.last,
+    //   newRouterPaths: _currentRouterPaths,
+    // );
+
+    // /// new added routes
+    // final newRoutes =
+    //     _currentRouterPaths.allRoutes.whereType<AppPageRoute>().toList()
+    //       ..removeWhere(
+    //         (e) => commonRoutesList.contains(e),
+    //       );
+
+    // /// remove unused cubit providers
+    // // _removeUnusedProviders();
+
+    // for (var route in newRoutes) {
+    //   route.onPush(_currentRouterPaths.cubitGetter);
+    // }
   }
 
-  void _removeUnusedProviders() {
-    if (_previousRoutes.isEmpty) {
-      return;
-    }
-    final lastRoute = _previousRoutes.last;
-    if (lastRoute.isEmpty) {
-      return;
-    }
-    final newLocation = _currentRouterPaths.location;
-    if (newLocation == null) {
-      return;
-    }
+  @visibleForTesting
+  void removeUnusedProviders() {
+    final routesToRemove = getAllRouterPathsToRemove(
+      newRouterPaths: _currentRouterPaths,
+      previousRoutes: _previousRoutes,
+    );
+    final routerPathsToRemove = getAllRoutesToRemove(
+      newRouterPaths: _currentRouterPaths,
+      routerPathsToRemove: routesToRemove,
+    );
 
-    /// first app page route for this paths
-    final baseAppRoute = _currentRouterPaths.baseAppPageRoute();
-    if (baseAppRoute == null) {
-      return;
-    }
-
-    /// if the same screen
-    if (baseAppRoute == lastRoute.last.route) {
-      _previousRoutes.removeLast();
-      return;
-    }
-
-    List<RouterPaths> toRemove = [];
-
-    for (var route in _previousRoutes) {
-      if (route.location == null) {
-        continue;
-      }
-      if (route.location!.startsWith(baseAppRoute.path)) {
-        toRemove.add(route);
-      }
-    }
-
-    if (toRemove.isEmpty) {
-      return;
-    }
-
-    final oldRoutes =
-        toRemove.map((e) => e.allRoutes).expand((e) => e).toList();
-
-    final allCurrentRoutes = _currentRouterPaths.allRoutes;
-    final oldRoutesToPop = oldRoutes
-        .where(
-          (route) => !allCurrentRoutes.contains(route),
-        )
-        .toList();
-
-    for (var route in oldRoutesToPop) {
+    for (var route in routerPathsToRemove) {
       route.dispose();
     }
 
-    _previousRoutes.removeWhere((e) => toRemove.contains(e));
+    _previousRoutes.removeWhere(
+      (e) => routesToRemove.contains(e),
+    );
+  }
+
+  @visibleForTesting
+  List<BaseAppRoute> getAllRoutesToRemove({
+    required List<RouterPaths> routerPathsToRemove,
+    required RouterPaths newRouterPaths,
+  }) {
+    final currentRoutes = newRouterPaths.allRoutes;
+    return routerPathsToRemove.expand((e) => e.allRoutes).where((route) {
+      return !currentRoutes.contains(route);
+    }).toList();
+  }
+
+  @visibleForTesting
+  List<RouterPaths> getAllRouterPathsToRemove({
+    required List<RouterPaths> previousRoutes,
+    required RouterPaths newRouterPaths,
+  }) {
+    if (previousRoutes.isEmpty) {
+      return [];
+    }
+
+    final lastRoute = previousRoutes.last;
+    if (lastRoute.isEmpty) {
+      return [];
+    }
+
+    final newLocation = newRouterPaths.location;
+    if (newLocation == null) {
+      return [];
+    }
+
+    final newRootRoute = newRouterPaths.baseAppPageRoute();
+
+    final List<RouterPaths> toRemoveList = [];
+
+    /// add old routes for the same base route
+    toRemoveList.addAll(
+      previousRoutes.where((routerPaths) {
+        if (routerPaths.isEmpty) {
+          return true;
+        }
+        final firstRoute = routerPaths.baseAppPageRoute();
+        return firstRoute == newRootRoute;
+      }),
+    );
+
+    return toRemoveList;
   }
 
   /// return common AppPageRoute between new and old route
-  List<AppPageRoute> _commonRoutes() {
-    if (_previousRoutes.isEmpty) {
+  @visibleForTesting
+  List<BaseAppRoute> commonRoutes({
+    required RouterPaths previousRoute,
+    required RouterPaths newRouterPaths,
+  }) {
+    if (previousRoute.isEmpty) {
       return [];
     }
-    return (_previousRoutes.last.allRoutes)
+    return (previousRoute.allRoutes)
         .toSet()
         .intersection(
-          _currentRouterPaths.allRoutes.toSet(),
+          newRouterPaths.allRoutes.toSet(),
         )
-        .toList()
-        .whereType<AppPageRoute>()
         .toList();
   }
 }

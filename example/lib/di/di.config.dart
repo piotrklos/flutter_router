@@ -4,6 +4,7 @@
 // InjectableConfigGenerator
 // **************************************************************************
 
+import 'package:app_router/route_finder.dart' as _i10;
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
@@ -29,9 +30,8 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.factory<_i5.HelperCubit>(() => _i5.HelperCubit());
   gh.lazySingleton<_i6.MessagesCubit>(() => _i6.MessagesCubit());
   gh.factory<_i7.MessagesDetailsCubit>(() => _i7.MessagesDetailsCubit());
-  gh.factory<_i8.MoreCubit>(() => _i8.MoreCubit());
-  gh.factory<_i9.PBAppRouter>(
-      () => _i11.AppRotuerImplementation());
+  gh.lazySingleton<_i8.MoreCubit>(() => _i8.MoreCubit());
+  gh.factory<_i9.PBAppRouter>(() => _i11.AppRotuerImplementation());
   gh.factoryParam<_i12.SettingsCubit, _i8.MoreCubit?, dynamic>(
       (_moreCubit, _) => _i12.SettingsCubit(_moreCubit));
   gh.factory<_i13.UserService>(() => _i13.UserService());

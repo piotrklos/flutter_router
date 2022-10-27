@@ -43,13 +43,6 @@ class AccountsTabRoutes {
         familyName: state.extra != null ? (state.extra as String?) : null,
       );
     },
-    providersBuilder: (cubitGetter) {
-      return [
-        GetIt.instance.get<SettingsCubit>(
-          param1: cubitGetter<MoreCubit>(),
-        ),
-      ];
-    },
   );
 
   final _accountsDetailsRoute = PBPageRoute(
@@ -57,11 +50,6 @@ class AccountsTabRoutes {
     path: "details",
     builder: (context, state) {
       return const AccountsDetailsPage();
-    },
-    providersBuilder: (cubitGetter) {
-      return [
-        GetIt.instance.get<HelperCubit>(),
-      ];
     },
   );
 }

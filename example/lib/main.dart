@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 import 'app_router/interface/inherited_router.dart';
 import 'app_router/interface/router.dart';
 import 'di/di.dart';
+import 'service/sample_bloc_observer.dart';
 
 void main() async {
   await initDependencies();
+  Bloc.observer = SampleBlocObserver();
   final routerInterface = GetIt.instance.get<PBAppRouter>();
   await routerInterface.init();
   runApp(MyApp(

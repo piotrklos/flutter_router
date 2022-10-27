@@ -312,6 +312,16 @@ class FoundRoute extends Equatable {
   final Exception? exception;
   final Completer<dynamic> completer;
 
+  @visibleForTesting
+  FoundRoute.test({
+    required this.route,
+    required this.fullPath,
+    this.extra,
+    Completer<dynamic>? completer,
+    this.pageKey,
+  })  : exception = null,
+        completer = completer ?? Completer<void>();
+
   const FoundRoute._({
     required this.route,
     required this.fullPath,

@@ -34,20 +34,9 @@ typedef StackedNavigationScaffoldBuilder = Widget Function(
 typedef AppRouteProvidersBuilder = T?
     Function<T extends AppRouterBlocProvider>();
 
-typedef AppRouterRedirect = FutureOr<String?> Function(
-  AppRouterPageState state,
-);
-
 typedef AppRouterSkip = FutureOr<SkipOption?> Function(
   AppRouterPageState state,
 );
-
-typedef AppRouteRedirectorFunction = FutureOr<RouterPaths> Function(
-  FutureOr<RouterPaths>,
-  RouteFinder, {
-  List<RouterPaths>? redirectHistory,
-  Object? extra,
-});
 
 enum SkipOption {
   goToParent,

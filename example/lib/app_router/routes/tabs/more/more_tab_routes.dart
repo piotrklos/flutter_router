@@ -28,9 +28,6 @@ class MoreTabRoutes {
     builder: (context, state) {
       return const MorePage();
     },
-    providersBuilder: (cubitGetter) => [
-      GetIt.instance.get<MoreCubit>(),
-    ],
   );
 
   final _notificationRoute = PBPageRoute(

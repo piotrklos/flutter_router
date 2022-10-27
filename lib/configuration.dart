@@ -2,21 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'route.dart';
 import 'router_exception.dart';
-import 'typedef.dart';
 import 'utils.dart';
 
 class AppRouterConfiguration {
   final List<BaseAppRoute> topLevelRoutes;
   final GlobalKey<NavigatorState> globalNavigatorKey;
   final Map<String, String> _nameToPathMap = <String, String>{};
-  final int redirectLimit;
-  final AppRouterRedirect topRedirect;
 
   AppRouterConfiguration({
     required this.topLevelRoutes,
     required this.globalNavigatorKey,
-    required this.topRedirect,
-    required this.redirectLimit,
   }) {
     createNamedMap(parentFullPath: '', routes: topLevelRoutes);
   }

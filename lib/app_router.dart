@@ -33,8 +33,6 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
   AppRouter({
     required List<BaseAppRoute> routes,
     required AppRouterWidgetBuilder errorBuilder,
-    AppRouterRedirect? redirect,
-    int redirectLimit = 5,
     GlobalKey<NavigatorState>? navigatorKey,
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
@@ -44,12 +42,10 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     _configuration = AppRouterConfiguration(
       globalNavigatorKey: navigatorKey ?? GlobalKey<NavigatorState>(),
       topLevelRoutes: routes,
-      topRedirect: redirect ?? (_) => null,
-      redirectLimit: redirectLimit,
     );
 
     _cubitProvider = AppRouterCubitProvider(
-      _configuration,
+      // _configuration,
     );
 
     _routeInformationParser = AppRouteInformationParser(

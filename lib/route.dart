@@ -37,13 +37,13 @@ class AppPageRoute extends BaseAppRoute {
   final String name;
   final GlobalKey<NavigatorState>? parentNavigatorKey;
   final AppRouterWidgetBuilder builder;
-  final AppRouterRedirect? redirect;
   final AppRouterSkip? skip;
 
   final List<AppRouterBlocProvider> Function(
     AppRouteProvidersBuilder cubitGetter,
   )? _providersBuilder;
   final List<AppRouterBlocProvider> _tempProvidersList = [];
+  final VoidCallback? _onDispose;
 
   List<AppRouterBlocProvider> get providers {
     return _tempProvidersList;
@@ -53,7 +53,6 @@ class AppPageRoute extends BaseAppRoute {
     required this.path,
     required this.name,
     required this.builder,
-    this.redirect,
     this.skip,
     List<BaseAppRoute> routes = const <BaseAppRoute>[],
     this.parentNavigatorKey,
@@ -61,9 +60,11 @@ class AppPageRoute extends BaseAppRoute {
       AppRouteProvidersBuilder cubitGetter,
     )?
         providersBuilder,
+    VoidCallback? onDispose,
   })  : assert(path.isNotEmpty, "Path cannot be empty"),
         assert(name.isNotEmpty, "Name cannot be empty"),
         _providersBuilder = providersBuilder,
+        _onDispose = onDispose,
         super._(
           routes: routes,
         );
@@ -77,7 +78,11 @@ class AppPageRoute extends BaseAppRoute {
 
   @override
   void dispose() {
+    for (var provider in _tempProvidersList) {
+      provider.close();
+    }
     _tempProvidersList.clear();
+    _onDispose?.call();
   }
 
   /// For example:

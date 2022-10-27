@@ -4,4 +4,6 @@ abstract class AppRouterBlocProvider<T extends BlocBase> {
   BlocProvider<StateStreamableSource<Object?>> get blocProvider {
     return BlocProvider<T>.value(value: this as T);
   }
+
+  void close();
 }

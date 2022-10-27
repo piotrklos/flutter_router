@@ -1,4 +1,6 @@
+import 'package:example/bloc/more/more_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../interface/route.dart';
 import 'more_tab_routes.dart';
@@ -20,6 +22,14 @@ class MoreTabConfig {
       iconData: Icons.more_horiz,
       name: "More",
       navigatorKey: _navigatorKey,
+      blocsGetter: () => [
+        GetIt.instance.get<MoreCubit>(),
+      ],
+      onDispose: onDispose,
     );
+  }
+
+  void onDispose() {
+    GetIt.instance.resetLazySingleton<MoreCubit>();
   }
 }
