@@ -1,9 +1,6 @@
 import 'package:get_it/get_it.dart';
 
 import '../../../interface/route.dart';
-import '../../../../bloc/helper/helper_bloc.dart';
-import '../../../../bloc/more/more_bloc.dart';
-import '../../../../bloc/settings/settings_bloc.dart';
 import '../../../../pages/home/accounts/accounts/accounts_page.dart';
 import '../../../../pages/home/accounts/accounts_details_page.dart';
 import '../../../../pages/home/accounts/relationship/relationship_page.dart';

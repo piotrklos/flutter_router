@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'app_router_bloc_provider.dart';
 import 'route.dart';
 
-import 'configuration.dart';
 import 'route_finder.dart';
 
 class AppRouterCubitProvider {
-  // final AppRouterConfiguration routerConfig;
-  // final List<AppRouterBlocProvider> currentProviders = [];
-  // AppRouterCubitProvider(this.routerConfig);
   final List<RouterPaths> _previousRoutes = [];
 
   RouterPaths _currentRouterPaths = RouterPaths.empty();
@@ -61,24 +56,6 @@ class AppRouterCubitProvider {
         newRoute.onPush(_currentRouterPaths.cubitGetter);
       }
     }
-    // final commonRoutesList = commonRoutes(
-    //   previousRoute: _previousRoutes.last,
-    //   newRouterPaths: _currentRouterPaths,
-    // );
-
-    // /// new added routes
-    // final newRoutes =
-    //     _currentRouterPaths.allRoutes.whereType<AppPageRoute>().toList()
-    //       ..removeWhere(
-    //         (e) => commonRoutesList.contains(e),
-    //       );
-
-    // /// remove unused cubit providers
-    // // _removeUnusedProviders();
-
-    // for (var route in newRoutes) {
-    //   route.onPush(_currentRouterPaths.cubitGetter);
-    // }
   }
 
   @visibleForTesting
