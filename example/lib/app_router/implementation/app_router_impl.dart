@@ -13,13 +13,16 @@ import 'route_extensions.dart';
 import 'mapper.dart';
 
 @Injectable(as: PBAppNavigator)
-class AppRotuerImplementation implements PBAppNavigator<RouterPaths> {
+class AppRotuerImplementation implements PBAppNavigator {
   static final _globalNavigationKey = GlobalKey<NavigatorState>();
 
   late final AppRouter _appRouter;
 
   @override
-  Future<void> init() {
+  Future<void> init({
+    String? initialLocationName,
+    List<NavigatorObserver> observers = const [],
+  }) {
     final sharedRoutes = SharedRoutes(_globalNavigationKey);
     final tabConfig = TabConfig();
     _appRouter = AppRouter(
@@ -37,6 +40,8 @@ class AppRotuerImplementation implements PBAppNavigator<RouterPaths> {
           message: state.exception.toString(),
         );
       },
+      initialLocationName: initialLocationName,
+      observers: observers,
     );
     return SynchronousFuture(null);
   }

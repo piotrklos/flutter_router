@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_router.dart';
-import 'app_router_location.dart';
 
 class StackedNavigationItem {
   final AppRouterLocation rootRouteLocation;

@@ -1,30 +1,72 @@
-// // This is a basic Flutter widget test.
-// //
-// // To perform an interaction with a widget in your test, use the WidgetTester
-// // utility that Flutter provides. For example, you can send tap and scroll
-// // gestures. You can also use WidgetTester to find child widgets in the widget
-// // tree, read text, and verify that the values of widget properties are correct.
+import 'package:example/bloc/more/more_bloc.dart';
+import 'package:example/pages/home/more/more_page.dart';
+import 'package:example/pages/start/start_page.dart';
+import 'package:example/service/user_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
-// import 'package:example/main.dart';
+import 'test_wrappers.dart';
 
-// void main() {
-//   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-//     // Build our app and trigger a frame.
-//     await tester.pumpWidget(const MyApp());
+class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
-//     // Verify that our counter starts at 0.
-//     expect(find.text('0'), findsOneWidget);
-//     expect(find.text('1'), findsNothing);
+class MockMoreCubit extends Mock implements MoreCubit {}
 
-//     // Tap the '+' icon and trigger a frame.
-//     await tester.tap(find.byIcon(Icons.add));
-//     await tester.pump();
+void main() {
+  late final NavigatorObserver navigatorObserver;
+  final moreCubit = MockMoreCubit();
 
-//     // Verify that our counter has incremented.
-//     expect(find.text('0'), findsNothing);
-//     expect(find.text('1'), findsOneWidget);
-//   });
-// }
+  setUpAll(() {
+    navigatorObserver = MockNavigatorObserver();
+    GetIt.instance.registerFactory<UserService>(() => UserService());
+    GetIt.instance.registerLazySingleton<MoreCubit>(() => moreCubit);
+  });
+
+  tearDownAll(() {
+    GetIt.instance.reset();
+  });
+
+  testWidgets('didPush', (WidgetTester tester) async {
+    final widget = await TestWrappers.preparePageWrapperWithaNavigator(
+      pageName: StartPage.name,
+      observer: navigatorObserver,
+    );
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Login To app'), findsOneWidget);
+    expect(find.text('Login Internal user'), findsOneWidget);
+    expect(find.text('Login External user'), findsOneWidget);
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('./resources/test.png'),
+    );
+
+    // await tester.tap(find.text('Login External user'));
+    // await tester.pump();
+  });
+
+  testWidgets('didPush - more page', (WidgetTester tester) async {
+    final widget = await TestWrappers.preparePageWrapperWithaNavigator(
+      pageName: MorePage.name,
+      observer: navigatorObserver,
+    );
+    await tester.pumpWidget(widget);
+    await tester.pumpAndSettle();
+
+    // expect(find.text('Login To app'), findsOneWidget);
+    // expect(find.text('Login Internal user'), findsOneWidget);
+    // expect(find.text('Login External user'), findsOneWidget);
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('./resources/test_more.png'),
+    );
+
+    // await tester.tap(find.text('Login External user'));
+    // await tester.pump();
+  });
+}

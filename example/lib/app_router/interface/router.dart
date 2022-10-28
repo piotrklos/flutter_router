@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import 'inherited_router.dart';
 import 'location.dart';
 
-abstract class PBAppNavigator<C extends Object> {
+abstract class PBAppNavigator {
   BackButtonDispatcher? get backButtonDispatcher;
 
-  RouteInformationParser<C> get routeInformationParser;
+  RouteInformationParser<Object> get routeInformationParser;
 
   RouteInformationProvider? get routeInformationProvider;
 
-  RouterDelegate<C> get routerDelegate;
+  RouterDelegate<Object> get routerDelegate;
 
-  Future<void> init();
+  Future<void> init({
+    String? initialLocationName,
+    List<NavigatorObserver> observers = const [],
+  });
 
   /// completer work only when [backToParent] is true
   Future<T?> goNamed<T extends Object?>(

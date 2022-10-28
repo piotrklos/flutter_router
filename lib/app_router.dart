@@ -39,6 +39,7 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
     String? initialLocation,
+    String? initialLocationName,
     Listenable? refreshListenable,
   }) {
     _configuration = AppRouterConfiguration(
@@ -46,9 +47,7 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
       topLevelRoutes: routes,
     );
 
-    _cubitProvider = AppRouterCubitProvider(
-        // _configuration,
-        );
+    _cubitProvider = AppRouterCubitProvider();
 
     _routeInformationParser = AppRouteInformationParser(
       RouteFinder(_configuration),
@@ -56,9 +55,16 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
       AppRouterSkipper(_configuration),
     );
 
+    String? _location;
+    if (initialLocationName != null) {
+      _location = _configuration.getFullPathForName(initialLocationName);
+    } else {
+      _location = initialLocation;
+    }
+
     _routeInformationProvider = AppRouteInformationProvider(
       initialRouteInformation: RouteInformation(
-        location: initialLocation ?? "/",
+        location: _location ?? "/",
       ),
       refreshListenable: refreshListenable,
     );

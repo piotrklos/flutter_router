@@ -1,5 +1,6 @@
 import 'package:app_router/app_router.dart' as router;
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 import '../../pages/home/tab_bar_page.dart';
 import '../interface/app_router_bloc_provider.dart';
@@ -34,12 +35,11 @@ extension PBPageRouteExtension on PBPageRoute {
             (e) => e.mapToBaseAppRoute(),
           )
           .toList(),
-      providersBuilder: (cubitGetter) {
-        return providersBuilder?.call(<T extends PBAppRouterBlocProvider>() {
-              return cubitGetter<T>();
-            }) ??
-            [];
-      },
+      providersBuilder: (cubitGetter) =>
+          providersBuilder?.call(<T extends PBAppRouterBlocProvider>() {
+            return cubitGetter<T>();
+          }) ??
+          [],
       skip: skipper != null
           ? (state) {
               final skipOption = skipper!(state.mapToRouterPageState());
@@ -101,8 +101,9 @@ extension PBTabRouteItemExtension on PBTabRouteItem {
         name: baseRoute.name,
       ),
       navigatorKey: navigatorKey,
-      providers: () =>
-          providers?.call().map((e) => e.blocProvider).toList() ?? [],
+      providers: () {
+        return providers?.call().map((e) => e.blocProvider).toList() ?? [];
+      },
     );
   }
 }
