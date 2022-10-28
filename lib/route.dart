@@ -146,7 +146,7 @@ class ShellRoute extends ShellRouteBase {
     required ShellRouteBuilder builder,
     required List<BaseAppRoute> routes,
     GlobalKey<NavigatorState>? navigatorKey,
-    required VoidCallback onPop,
+    VoidCallback? onPop,
   })  : assert(routes.isNotEmpty, "Routes cannot be empty"),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._(

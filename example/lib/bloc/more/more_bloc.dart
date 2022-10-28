@@ -13,7 +13,6 @@ class MoreCubit extends Cubit<MoreState>
         );
 
   void changeMessage(String message) {
-    print("changeMessage");
     emit(MoreState(message));
   }
 }

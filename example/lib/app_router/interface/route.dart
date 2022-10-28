@@ -21,6 +21,9 @@ abstract class IRoute {
 
   String get fullpath {
     if (_parent == null) {
+      if (_route.startsWith("/")) {
+        return _route;
+      }
       return "/$_route";
     }
     if (this is! PBPageRoute) {
@@ -79,7 +82,12 @@ class PBPageRoute extends IRoute {
   })  : _path = path ?? name,
         _name = name;
 
-  String get path => _path;
+  String get path {
+    if (_parent == null) {
+      return "/$_path";
+    }
+    return _path;
+  }
 }
 
 class PBTabRouteItem extends Equatable {

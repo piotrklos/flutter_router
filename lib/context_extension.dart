@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'app_router.dart';
+import 'app_router_router.dart';
 
 extension AppRouterExtension on BuildContext {
   Future<T?> go<T extends Object?>(
