@@ -70,7 +70,7 @@ class AppRouterCubitProvider {
     );
 
     for (var route in routerPathsToRemove) {
-      route.dispose();
+      route.onPop();
     }
 
     _previousRoutes.removeWhere(

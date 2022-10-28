@@ -28,7 +28,7 @@ abstract class BaseAppRoute extends Equatable {
     });
   }
 
-  void dispose();
+  void onPop();
 }
 
 /// Base Page route
@@ -43,7 +43,8 @@ class AppPageRoute extends BaseAppRoute {
     AppRouteProvidersBuilder cubitGetter,
   )? _providersBuilder;
   final List<AppRouterBlocProvider> _tempProvidersList = [];
-  final VoidCallback? _onDispose;
+  final VoidCallback? _onPop;
+  final VoidCallback? _onPush;
 
   List<AppRouterBlocProvider> get providers {
     return _tempProvidersList;
@@ -60,16 +61,19 @@ class AppPageRoute extends BaseAppRoute {
       AppRouteProvidersBuilder cubitGetter,
     )?
         providersBuilder,
-    VoidCallback? onDispose,
+    VoidCallback? onPop,
+    VoidCallback? onPush,
   })  : assert(path.isNotEmpty, "Path cannot be empty"),
         assert(name.isNotEmpty, "Name cannot be empty"),
         _providersBuilder = providersBuilder,
-        _onDispose = onDispose,
+        _onPop = onPop,
+        _onPush = onPush,
         super._(
           routes: routes,
         );
 
   void onPush(AppRouteProvidersBuilder cubitGetter) {
+    _onPush?.call();
     if (_tempProvidersList.isNotEmpty) {
       return;
     }
@@ -77,12 +81,12 @@ class AppPageRoute extends BaseAppRoute {
   }
 
   @override
-  void dispose() {
+  void onPop() {
     for (var provider in _tempProvidersList) {
       provider.close();
     }
     _tempProvidersList.clear();
-    _onDispose?.call();
+    _onPop?.call();
   }
 
   /// For example:
@@ -115,21 +119,22 @@ class AppPageRoute extends BaseAppRoute {
 /// Route to displays a UI shell around the matching child route.
 abstract class ShellRouteBase extends BaseAppRoute {
   final ShellRouteBuilder builder;
-  final VoidCallback? onDispose;
+  final VoidCallback? _onPop;
 
   const ShellRouteBase._({
     required this.builder,
     required List<BaseAppRoute> routes,
-    this.onDispose,
-  }) : super._(
+    VoidCallback? onPop,
+  })  : _onPop = onPop,
+        super._(
           routes: routes,
         );
 
   GlobalKey<NavigatorState> navigatorKeyForChildRoute(BaseAppRoute route);
 
   @override
-  void dispose() {
-    onDispose?.call();
+  void onPop() {
+    _onPop?.call();
   }
 }
 
@@ -138,12 +143,13 @@ class ShellRoute extends ShellRouteBase {
     required ShellRouteBuilder builder,
     required List<BaseAppRoute> routes,
     GlobalKey<NavigatorState>? navigatorKey,
-    required VoidCallback onDispose,
+    required VoidCallback onPop,
   })  : assert(routes.isNotEmpty, "Routes cannot be empty"),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._(
           routes: routes,
           builder: builder,
+          onPop: onPop,
         ) {
     for (final BaseAppRoute route in routes) {
       if (route is AppPageRoute) {
@@ -177,7 +183,7 @@ class MultiShellRoute extends ShellRouteBase {
     required this.navigatorKeys,
     required ShellRouteBuilder builder,
     required List<BaseAppRoute> routes,
-    required VoidCallback? onDispose,
+    required VoidCallback? onPop,
   })  : assert(routes.isNotEmpty, "Routes cannot be empty"),
         assert(
           navigatorKeys.length == routes.length,
@@ -186,7 +192,7 @@ class MultiShellRoute extends ShellRouteBase {
         super._(
           routes: routes,
           builder: builder,
-          onDispose: onDispose,
+          onPop: onPop,
         ) {
     for (int i = 0; i < routes.length; ++i) {
       final BaseAppRoute route = routes[i];
@@ -204,12 +210,12 @@ class MultiShellRoute extends ShellRouteBase {
     required List<BaseAppRoute> routes,
     required List<StackedNavigationItem> stackItems,
     StackedNavigationScaffoldBuilder? scaffoldBuilder,
-    VoidCallback? onDispose,
+    VoidCallback? onPop,
   }) {
     return MultiShellRoute._(
       routes: routes,
       navigatorKeys: stackItems.map((e) => e.navigatorKey).toList(),
-      onDispose: onDispose,
+      onPop: onPop,
       builder: (context, state, child) {
         assert(child is Navigator);
         return StackedNavigationShell(

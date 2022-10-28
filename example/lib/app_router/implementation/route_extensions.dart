@@ -83,7 +83,7 @@ extension PBTabRouteExtension on PBTabRoute {
           tabRouteItems: items,
         );
       },
-      onDispose: () {
+      onPop: () {
         dispose();
       },
     );

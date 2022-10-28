@@ -398,29 +398,29 @@ void main() {
 
   group("removeUnusedProviders", () {
     test("Should dispose only old route - test 1", () {
-      var name1Disposed = false;
-      var name2Disposed = false;
-      var name3Disposed = false;
-      var name4Disposed = false;
-      var name5Disposed = false;
-      final sampleRoute = _MockFoundRoute("name1", onDispose: () {
-        name1Disposed = true;
+      var name1Pop = false;
+      var name2Pop = false;
+      var name3Pop = false;
+      var name4Pop = false;
+      var name5Pop = false;
+      final sampleRoute = _MockFoundRoute("name1", onPop: () {
+        name1Pop = true;
       });
       final cubitProvider = _MockedAppRouterCubitProvider();
       cubitProvider.setPreviousRoutes([
         RouterPaths([
           sampleRoute,
-          _MockFoundRoute("name2", onDispose: () {
-            name2Disposed = true;
+          _MockFoundRoute("name2", onPop: () {
+            name2Pop = true;
           }),
-          _MockFoundRoute("name3", onDispose: () {
-            name3Disposed = true;
+          _MockFoundRoute("name3", onPop: () {
+            name3Pop = true;
           }),
-          _MockFoundRoute("name4", onDispose: () {
-            name4Disposed = true;
+          _MockFoundRoute("name4", onPop: () {
+            name4Pop = true;
           }),
-          _MockFoundRoute("name5", onDispose: () {
-            name5Disposed = true;
+          _MockFoundRoute("name5", onPop: () {
+            name5Pop = true;
           }),
         ]),
       ]);
@@ -429,49 +429,49 @@ void main() {
       ));
       cubitProvider.removeUnusedProviders();
       expect(cubitProvider.previousRoutes, []);
-      expect(name1Disposed, false);
-      expect(name2Disposed, true);
-      expect(name3Disposed, true);
-      expect(name4Disposed, true);
-      expect(name5Disposed, true);
+      expect(name1Pop, false);
+      expect(name2Pop, true);
+      expect(name3Pop, true);
+      expect(name4Pop, true);
+      expect(name5Pop, true);
     });
     test("Should dispose only old route - test 2", () {
-      var name1Disposed = false;
-      var name2Disposed = false;
-      var name3Disposed = false;
-      var name4Disposed = false;
-      var name5Disposed = false;
-      var name6Disposed = false;
-      var name7Disposed = false;
-      final sampleRoute = _MockFoundRoute("name1", onDispose: () {
-        name1Disposed = true;
+      var name1Pop = false;
+      var name2Pop = false;
+      var name3Pop = false;
+      var name4Pop = false;
+      var name5Pop = false;
+      var name6Pop = false;
+      var name7Pop = false;
+      final sampleRoute = _MockFoundRoute("name1", onPop: () {
+        name1Pop = true;
       });
       final routerPaths = RouterPaths([
-        _MockFoundRoute("name6", onDispose: () {
-          name6Disposed = true;
+        _MockFoundRoute("name6", onPop: () {
+          name6Pop = true;
         }),
-        _MockFoundRoute("name6", onDispose: () {
-          name7Disposed = true;
+        _MockFoundRoute("name6", onPop: () {
+          name7Pop = true;
         }),
       ]);
       final cubitProvider = _MockedAppRouterCubitProvider();
       cubitProvider.setPreviousRoutes([
         RouterPaths([
           sampleRoute,
-          _MockFoundRoute("name2", onDispose: () {
-            name2Disposed = true;
+          _MockFoundRoute("name2", onPop: () {
+            name2Pop = true;
           }),
-          _MockFoundRoute("name3", onDispose: () {
-            name3Disposed = true;
+          _MockFoundRoute("name3", onPop: () {
+            name3Pop = true;
           }),
         ]),
         RouterPaths([
           sampleRoute,
-          _MockFoundRoute("name4", onDispose: () {
-            name4Disposed = true;
+          _MockFoundRoute("name4", onPop: () {
+            name4Pop = true;
           }),
-          _MockFoundRoute("name5", onDispose: () {
-            name5Disposed = true;
+          _MockFoundRoute("name5", onPop: () {
+            name5Pop = true;
           }),
         ]),
         routerPaths,
@@ -481,18 +481,86 @@ void main() {
       ));
       cubitProvider.removeUnusedProviders();
       expect(cubitProvider.previousRoutes, [routerPaths]);
-      expect(name1Disposed, false);
-      expect(name2Disposed, true);
-      expect(name3Disposed, true);
-      expect(name4Disposed, true);
-      expect(name5Disposed, true);
-      expect(name6Disposed, false);
-      expect(name7Disposed, false);
+      expect(name1Pop, false);
+      expect(name2Pop, true);
+      expect(name3Pop, true);
+      expect(name4Pop, true);
+      expect(name5Pop, true);
+      expect(name6Pop, false);
+      expect(name7Pop, false);
     });
   });
 
   group("setNewRouterPaths", () {
-    final cubitProvider = _MockedAppRouterCubitProvider();
+    test("Should call OnPush only on new routes", () {
+      var name1Push = false;
+      var name2Push = false;
+      var name3Push = false;
+      var name4Push = false;
+      final cubitProvider = AppRouterCubitProvider();
+      final routerPaths = RouterPaths([
+        _MockFoundRoute("name1", onPush: () {
+          name1Push = true;
+        }),
+        _MockFoundRoute("name2", onPush: () {
+          name2Push = true;
+        }),
+      ]);
+      cubitProvider.setCurrentRouterPaths(routerPaths);
+      cubitProvider.setPreviousRoutes([
+        RouterPaths([
+          _MockFoundRoute("name3", onPush: () {
+            name3Push = true;
+          }),
+          _MockFoundRoute("name4", onPush: () {
+            name4Push = true;
+          }),
+        ]),
+      ]);
+      cubitProvider.setNewProviders();
+      expect(name1Push, true);
+      expect(name2Push, true);
+      expect(name3Push, false);
+      expect(name4Push, false);
+    });
+  });
+
+  group("restoreRouteInformation", () {
+    test("Should do nothing if is the same route as previously", () {
+      var setNewRouterPathsCalled = false;
+      final cubitProvider = _MockedAppRouterCubitProvider(
+        onSetNewRouterPathsCalled: () {
+          setNewRouterPathsCalled = true;
+        },
+      );
+      final routerPaths = RouterPaths([
+        _MockFoundRoute("name1"),
+        _MockFoundRoute("name2"),
+      ]);
+      cubitProvider.setCurrentRouterPaths(routerPaths);
+      cubitProvider.restoreRouteInformation(routerPaths);
+      expect(setNewRouterPathsCalled, false);
+    });
+    test("Should call setNewRouterPaths", () {
+      var setNewRouterPathsCalled = false;
+      final cubitProvider = _MockedAppRouterCubitProvider(
+        onSetNewRouterPathsCalled: () {
+          setNewRouterPathsCalled = true;
+        },
+      );
+      cubitProvider.setPreviousRoutes([
+        RouterPaths([
+          _MockFoundRoute("name1"),
+          _MockFoundRoute("name2"),
+        ]),
+      ]);
+      cubitProvider.restoreRouteInformation(RouterPaths([
+        _MockFoundRoute("name1"),
+        _MockFoundRoute("name2"),
+        _MockFoundRoute("name3"),
+      ]));
+      expect(setNewRouterPathsCalled, true);
+    });
   });
 }
 
@@ -521,13 +589,15 @@ class _MockedAppRouterCubitProvider extends AppRouterCubitProvider {
 class _MockFoundRoute extends FoundRoute {
   _MockFoundRoute(
     String name, {
-    VoidCallback? onDispose,
+    VoidCallback? onPop,
+    VoidCallback? onPush,
   }) : super.test(
           route: AppPageRoute(
             path: name,
             name: name,
             builder: (_, __) => Container(),
-            onDispose: onDispose,
+            onPop: onPop,
+            onPush: onPush,
           ),
           fullPath: "/$name",
         );
