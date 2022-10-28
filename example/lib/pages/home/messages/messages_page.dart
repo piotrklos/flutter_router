@@ -1,5 +1,6 @@
 import 'package:example/pages/home/messages/messages_details_page.dart';
 import 'package:example/pages/home/more/settings/settings_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app_router/interface/router.dart';
@@ -13,11 +14,11 @@ class MessagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Messages"),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("Messages"),
       ),
-      body: Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

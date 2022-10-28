@@ -1,4 +1,5 @@
 import 'package:example/pages/home/more/settings/helper/helper_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,11 +20,11 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Settings"),
+        return CupertinoPageScaffold(
+          navigationBar: const CupertinoNavigationBar(
+            middle: Text("Settings"),
           ),
-          body: Center(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

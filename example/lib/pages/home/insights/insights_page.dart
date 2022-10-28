@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app_router/interface/router.dart';
@@ -12,11 +13,11 @@ class InsightsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Insights"),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("Insights"),
       ),
-      body: Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

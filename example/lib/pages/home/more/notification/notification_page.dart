@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class NotificationPage extends StatelessWidget {
   static const String name = "notification";
-  
+
   const NotificationPage({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Notification"),
+    return const CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text("Notification"),
       ),
-      body: const Center(
+      child: Center(
         child: Text("Notification Tab"),
       ),
     );

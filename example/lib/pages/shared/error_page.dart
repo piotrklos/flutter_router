@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class ErrorPage extends StatelessWidget {
   final String? message;
@@ -10,13 +10,13 @@ class ErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text(
           "Error",
         ),
       ),
-      body: Center(
+      child: Center(
         child: Text(message ?? "---"),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:app_router/app_router.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -15,7 +16,7 @@ import 'mapper.dart';
 class AppRotuerImplementation implements PBAppNavigator {
   static final _globalNavigationKey = GlobalKey<NavigatorState>();
 
-  late final AppRouter _appRouter;
+  late final AppRouter appRouter;
 
   @override
   Future<void> init({
@@ -24,7 +25,7 @@ class AppRotuerImplementation implements PBAppNavigator {
   }) {
     final sharedRoutes = SharedRoutes(_globalNavigationKey);
     final tabConfig = TabConfig();
-    _appRouter = AppRouter(
+    appRouter = AppRouter(
       navigatorKey: _globalNavigationKey,
       routes: [
         ...sharedRoutes.routes,
@@ -45,27 +46,12 @@ class AppRotuerImplementation implements PBAppNavigator {
     return SynchronousFuture(null);
   }
 
-  @override
-  BackButtonDispatcher? get backButtonDispatcher =>
-      _appRouter.backButtonDispatcher;
-
-  @override
-  RouteInformationParser<RouterPaths> get routeInformationParser =>
-      _appRouter.routeInformationParser;
-
-  @override
-  RouteInformationProvider? get routeInformationProvider =>
-      _appRouter.routeInformationProvider;
-
-  @override
-  RouterDelegate<RouterPaths> get routerDelegate => _appRouter.routerDelegate;
-
   Future<T?> go<T extends Object?>(
     String location, {
     Object? extra,
     bool backToParent = false,
   }) {
-    return _appRouter.go<T>(
+    return appRouter.go<T>(
       location,
       backToParent: backToParent,
       extra: extra,
@@ -78,7 +64,7 @@ class AppRotuerImplementation implements PBAppNavigator {
     Object? extra,
     bool backToParent = false,
   }) {
-    return _appRouter.goNamed<T>(
+    return appRouter.goNamed<T>(
       name,
       backToParent: backToParent,
       extra: extra,
@@ -87,14 +73,14 @@ class AppRotuerImplementation implements PBAppNavigator {
 
   @override
   void pop<T extends Object?>([T? result]) {
-    return _appRouter.pop<T>(result);
+    return appRouter.pop<T>(result);
   }
 
   Future<T?> push<T extends Object?>(
     String location, {
     Object? extra,
   }) {
-    return _appRouter.push<T>(
+    return appRouter.push<T>(
       location,
       extra: extra,
     );
@@ -105,7 +91,7 @@ class AppRotuerImplementation implements PBAppNavigator {
     String name, {
     Object? extra,
   }) {
-    return _appRouter.pushNamed(
+    return appRouter.pushNamed(
       name,
       extra: extra,
     );
@@ -113,5 +99,30 @@ class AppRotuerImplementation implements PBAppNavigator {
 
   @override
   PBRouteLocation? get currentLocation =>
-      _appRouter.currentLocation?.mapToPBRouteLocation();
+      appRouter.currentLocation?.mapToPBRouteLocation();
+
+  @override
+  Widget getAppWidget({
+    ThemeData? materialThemeData,
+    CupertinoThemeData? cupertinoThemeData,
+    List<Locale> supportedLocales = const <Locale>[Locale('en', 'US')],
+    Locale? locale,
+    List<LocalizationsDelegate>? localizationsDelegates,
+    String title = '',
+    bool useInheritedMediaQuery = false,
+  }) {
+    return CupertinoApp.router(
+      routeInformationParser: appRouter.routeInformationParser,
+      routerDelegate: appRouter.routerDelegate,
+      backButtonDispatcher: appRouter.backButtonDispatcher,
+      routeInformationProvider: appRouter.routeInformationProvider,
+      supportedLocales: supportedLocales,
+      locale: locale,
+      localizationsDelegates: localizationsDelegates,
+      title: title,
+      theme: cupertinoThemeData,
+      useInheritedMediaQuery: useInheritedMediaQuery,
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }

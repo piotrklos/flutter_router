@@ -36,7 +36,7 @@ extension PBPageRouteExtension on PBPageRoute {
         );
       },
       name: name,
-      path: parent != null ? path : "/$path",
+      path: path,
       routes: routes
           .map(
             (e) => e.mapToBaseAppRoute(

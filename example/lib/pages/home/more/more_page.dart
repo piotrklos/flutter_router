@@ -1,6 +1,7 @@
 import 'package:example/pages/home/more/notification/notification_page.dart';
 import 'package:example/pages/home/more/settings/settings_page.dart';
 import 'package:example/pages/start/start_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,11 +20,11 @@ class MorePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MoreCubit, MoreState>(
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("More"),
+        return CupertinoPageScaffold(
+          navigationBar: const CupertinoNavigationBar(
+            middle: Text("More"),
           ),
-          body: ListView(
+          child: ListView(
             primary: true,
             children: [
               Container(

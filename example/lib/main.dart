@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -28,17 +29,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return InheritedPBAppRouter(
       appRouter: routerInterface,
-      child: MaterialApp.router(
-        routeInformationParser: routerInterface.routeInformationParser,
-        routerDelegate: routerInterface.routerDelegate,
-        backButtonDispatcher: routerInterface.backButtonDispatcher,
-        routeInformationProvider: routerInterface.routeInformationProvider,
+      child: routerInterface.getAppWidget(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-            selectedItemColor: Colors.red,
-            unselectedItemColor: Colors.black,
+        cupertinoThemeData: const CupertinoThemeData(
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: Colors.white,
+          textTheme: CupertinoTextThemeData(
+            tabLabelTextStyle: TextStyle(
+              fontSize: 10,
+              height: 1.0,
+            ),
           ),
         ),
       ),

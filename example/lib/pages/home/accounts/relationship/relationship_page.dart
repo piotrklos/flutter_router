@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:example/pages/home/accounts/accounts/accounts_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app_router/interface/router.dart';
@@ -20,11 +21,11 @@ class RelationshipPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Relationship"),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("Relationship"),
       ),
-      body: ListView.builder(
+      child: ListView.builder(
         itemBuilder: (ctx, index) {
           return _relationshipItem(context, _relationship[index]);
         },

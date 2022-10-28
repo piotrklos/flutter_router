@@ -1,17 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'inherited_router.dart';
 import 'location.dart';
 
 abstract class PBAppNavigator {
-  BackButtonDispatcher? get backButtonDispatcher;
-
-  RouteInformationParser<Object> get routeInformationParser;
-
-  RouteInformationProvider? get routeInformationProvider;
-
-  RouterDelegate<Object> get routerDelegate;
-
   Future<void> init({
     String? initialLocationName,
     List<NavigatorObserver> observers = const [],
@@ -38,4 +31,14 @@ abstract class PBAppNavigator {
         context.dependOnInheritedWidgetOfExactType<InheritedPBAppRouter>();
     return inherited!.appRouter;
   }
+
+  Widget getAppWidget({
+    ThemeData? materialThemeData,
+    CupertinoThemeData? cupertinoThemeData,
+    List<Locale> supportedLocales = const <Locale>[Locale('en', 'US')],
+    Locale? locale,
+    List<LocalizationsDelegate>? localizationsDelegates,
+    String title = '',
+    bool useInheritedMediaQuery = false,
+  });
 }

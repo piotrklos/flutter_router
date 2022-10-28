@@ -3,6 +3,7 @@ import 'package:example/pages/home/accounts/accounts_details_page.dart';
 import 'package:example/pages/home/messages/messages_details_page.dart';
 import 'package:example/pages/home/more/more_page.dart';
 import 'package:example/pages/home/more/settings/helper/helper_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,11 +20,11 @@ class AccountsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Accounts: ${familyName ?? "---"}"),
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text("Accounts: ${familyName ?? "---"}"),
       ),
-      body: Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

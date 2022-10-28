@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../app_router/interface/route.dart';
 import '../../app_router/interface/router.dart';
@@ -20,25 +20,30 @@ class TabBarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: BottomNavigationBar(
-        items: tabRouteItems
-            .map(
-              (e) => BottomNavigationBarItem(
-                icon: Icon(
-                  e.iconData,
+    return Column(
+      children: [
+        Expanded(child: body),
+        CupertinoTabBar(
+          currentIndex: currentIndex,
+          iconSize: 16,
+          items: tabRouteItems
+              .map(
+                (e) => BottomNavigationBarItem(
+                  icon: Icon(
+                    e.iconData,
+                  ),
+                  label: e.name,
                 ),
-                label: e.name,
-              ),
-            )
-            .toList(),
-        currentIndex: currentIndex,
-        onTap: (int tappedIndex) => _onItemTapped(
-          context,
-          itemsState[tappedIndex],
+              )
+              .toList(),
+          onTap: (index) {
+            _onItemTapped(
+              context,
+              itemsState[index],
+            );
+          },
         ),
-      ),
+      ],
     );
   }
 

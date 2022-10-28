@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +12,7 @@ import '../../../../../bloc/settings/settings_state.dart';
 
 class HelperPage extends StatelessWidget {
   static const name = "helper";
-  
+
   final String? initText;
   const HelperPage({
     this.initText,
@@ -22,11 +23,11 @@ class HelperPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HelperCubit, HelperState>(
       builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Helper Settings"),
+        return CupertinoPageScaffold(
+          navigationBar: const CupertinoNavigationBar(
+            middle: Text("Helper Settings"),
           ),
-          body: Center(
+          child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

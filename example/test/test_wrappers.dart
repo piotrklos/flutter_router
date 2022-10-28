@@ -1,6 +1,7 @@
 import 'package:example/app_router/implementation/mock/app_router_impl.dart';
 import 'package:example/app_router/interface/inherited_router.dart';
 import 'package:example/app_router/interface/route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,14 +48,18 @@ class TestWrappers {
     );
     final app = InheritedPBAppRouter(
       appRouter: router,
-      child: MaterialApp.router(
-        routeInformationParser: router.routeInformationParser,
-        routerDelegate: router.routerDelegate,
-        backButtonDispatcher: router.backButtonDispatcher,
-        routeInformationProvider: router.routeInformationProvider,
+      child: router.getAppWidget(
         useInheritedMediaQuery: useInheritedMediaQuery,
-        theme: ThemeData.light(),
-        debugShowCheckedModeBanner: false,
+        cupertinoThemeData: const CupertinoThemeData(
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: Colors.white,
+          textTheme: CupertinoTextThemeData(
+            tabLabelTextStyle: TextStyle(
+              fontSize: 10,
+              height: 1.0,
+            ),
+          ),
+        ),
       ),
     );
     if (providers.isNotEmpty) {

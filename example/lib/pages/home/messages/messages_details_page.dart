@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/details/details_bloc.dart';
@@ -18,11 +18,11 @@ class MessagesDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Messages Details"),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text("Messages Details"),
       ),
-      body: BlocProvider<MessagesDetailsCubit>(
+      child: BlocProvider<MessagesDetailsCubit>(
         create: (context) => getIt.get<MessagesDetailsCubit>(),
         child: BlocBuilder<MessagesDetailsCubit, MessagesDetailsState>(
           builder: (context, detailsState) {
