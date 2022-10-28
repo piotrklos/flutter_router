@@ -95,7 +95,7 @@ class HelperPage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    PBAppRouter.of(context).pop();
+                    PBAppNavigator.of(context).pop();
                   },
                   child: const Text("Pop"),
                 ),

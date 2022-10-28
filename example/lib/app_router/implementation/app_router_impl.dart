@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../pages/shared/error_page.dart';
+import '../interface/location.dart';
 import '../interface/router.dart';
 import '../routes/shared_routes.dart';
 import '../routes/tabs/tab_config.dart';
 import 'route_extensions.dart';
+import 'mapper.dart';
 
-@Injectable(as: PBAppRouter)
-class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
+@Injectable(as: PBAppNavigator)
+class AppRotuerImplementation implements PBAppNavigator<RouterPaths> {
   static final _globalNavigationKey = GlobalKey<NavigatorState>();
 
   late final AppRouter _appRouter;
@@ -108,5 +110,6 @@ class AppRotuerImplementation implements PBAppRouter<RouterPaths> {
   }
 
   @override
-  String? get currentLocation => _appRouter.currentLocation;
+  PBRouteLocation? get currentLocation =>
+      _appRouter.currentLocation?.mapToPBRouteLocation();
 }

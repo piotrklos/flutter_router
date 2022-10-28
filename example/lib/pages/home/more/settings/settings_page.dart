@@ -1,3 +1,4 @@
+import 'package:example/pages/home/more/settings/helper/helper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,13 +67,13 @@ class SettingsPage extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    PBAppRouter.of(context).go("/more/settings/helper");
+                    PBAppNavigator.of(context).goNamed(HelperPage.name);
                   },
                   child: const Text("Go to Helper"),
                 ),
                 TextButton(
                   onPressed: () {
-                    PBAppRouter.of(context).pop();
+                    PBAppNavigator.of(context).pop();
                   },
                   child: const Text("Pop"),
                 ),

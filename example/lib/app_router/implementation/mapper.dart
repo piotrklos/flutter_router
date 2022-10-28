@@ -1,5 +1,6 @@
 import 'package:app_router/app_router.dart' as router;
 
+import '../interface/location.dart';
 import '../interface/router_page_state.dart';
 import '../interface/skipper.dart';
 
@@ -23,5 +24,14 @@ extension SkipOptionExtension on SkipOption {
       case SkipOption.goToParent:
         return router.SkipOption.goToParent;
     }
+  }
+}
+
+extension AppRouterLocation on router.AppRouterLocation {
+  PBRouteLocation mapToPBRouteLocation() {
+    return PBRouteLocation(
+      name: name,
+      path: path,
+    );
   }
 }

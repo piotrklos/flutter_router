@@ -89,7 +89,7 @@ class AppRouteInformationParser extends RouteInformationParser<RouterPaths> {
   RouteInformation restoreRouteInformation(RouterPaths configuration) {
     cubitProvider.restoreRouteInformation(configuration);
     return RouteInformation(
-      location: configuration.location,
+      location: configuration.location?.path,
       state: configuration.extra,
     );
   }

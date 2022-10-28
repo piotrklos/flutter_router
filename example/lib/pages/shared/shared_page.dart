@@ -7,6 +7,7 @@ class SharedObject {
 }
 
 class SharedPage extends StatelessWidget {
+  static const name = "shared";
   final SharedObject? sharedObject;
 
   const SharedPage({

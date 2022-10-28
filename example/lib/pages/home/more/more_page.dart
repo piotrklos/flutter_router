@@ -1,3 +1,6 @@
+import 'package:example/pages/home/more/notification/notification_page.dart';
+import 'package:example/pages/home/more/settings/settings_page.dart';
+import 'package:example/pages/start/start_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -39,21 +42,21 @@ class MorePage extends StatelessWidget {
               const SizedBox(height: 32),
               TextButton(
                 onPressed: () {
-                  PBAppRouter.of(context).go("/more/notification");
+                  PBAppNavigator.of(context).goNamed(NotificationPage.name);
                 },
                 child: const Text("Notification"),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  PBAppRouter.of(context).go("/more/settings");
+                  PBAppNavigator.of(context).goNamed(SettingsPage.name);
                 },
                 child: const Text("Settings"),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  PBAppRouter.of(context).go("/");
+                  PBAppNavigator.of(context).goNamed(StartPage.name);
                 },
                 child: const Text("Log out"),
               ),

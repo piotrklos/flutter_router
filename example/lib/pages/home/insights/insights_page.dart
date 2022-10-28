@@ -44,9 +44,9 @@ class InsightsPage extends StatelessWidget {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                PBAppRouter.of(context)
-                    .push(
-                  "/shared",
+                PBAppNavigator.of(context)
+                    .pushNamed(
+                  SharedPage.name,
                   extra: SharedObject("Sample message from insights"),
                 )
                     .then((value) {

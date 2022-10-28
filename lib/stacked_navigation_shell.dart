@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_router.dart';
+import 'app_router_location.dart';
 
 class StackedNavigationItem {
-  final String rootRoutePath;
+  final AppRouterLocation rootRouteLocation;
   final GlobalKey<NavigatorState> navigatorKey;
-  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>? providers;
+  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>?
+      providers;
 
   StackedNavigationItem({
-    required this.rootRoutePath,
+    required this.rootRouteLocation,
     required this.navigatorKey,
     this.providers,
   });
@@ -18,12 +20,13 @@ class StackedNavigationItem {
 
 class StackedNavigationItemState {
   final StackedNavigationItem item;
-  String? lastLocation;
+  AppRouterLocation? lastLocation;
   Navigator? navigator;
 
   StackedNavigationItemState(this.item);
 
-  String get currentLocation => lastLocation ?? item.rootRoutePath;
+  AppRouterLocation get currentLocation =>
+      lastLocation ?? item.rootRouteLocation;
 }
 
 class StackedNavigationShell extends StatefulWidget {

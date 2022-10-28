@@ -1,9 +1,11 @@
+import 'package:example/pages/home/accounts/relationship/relationship_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../app_router/interface/router.dart';
 import '../../service/user_service.dart';
 
 class StartPage extends StatelessWidget {
+  static const name = "start";
   const StartPage({
     Key? key,
   }) : super(key: key);
@@ -27,14 +29,14 @@ class StartPage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 UserService.isInternal = true;
-                PBAppRouter.of(context).go("/relationship");
+                PBAppNavigator.of(context).goNamed(RelationshipPage.name);
               },
               child: const Text("Login Internal user"),
             ),
             TextButton(
               onPressed: () {
                 UserService.isInternal = false;
-                PBAppRouter.of(context).go("/relationship");
+                PBAppNavigator.of(context).goNamed(RelationshipPage.name);
               },
               child: const Text("Login External user"),
             ),

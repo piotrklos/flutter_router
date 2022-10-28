@@ -1,9 +1,11 @@
+import 'location.dart';
+
 class PBTabBarItemState {
-  final String currentLocation;
-  final String rootRoutePath;
+  final PBRouteLocation currentLocation;
+  final PBRouteLocation rootRouteLocation;
 
   PBTabBarItemState({
     required this.currentLocation,
-    required this.rootRoutePath,
+    required this.rootRouteLocation,
   });
 }

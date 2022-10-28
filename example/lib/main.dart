@@ -10,7 +10,7 @@ import 'service/sample_bloc_observer.dart';
 void main() async {
   await initDependencies();
   Bloc.observer = SampleBlocObserver();
-  final routerInterface = GetIt.instance.get<PBAppRouter>();
+  final routerInterface = GetIt.instance.get<PBAppNavigator>();
   await routerInterface.init();
   runApp(MyApp(
     routerInterface: routerInterface,
@@ -18,7 +18,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final PBAppRouter routerInterface;
+  final PBAppNavigator routerInterface;
   const MyApp({
     required this.routerInterface,
     Key? key,

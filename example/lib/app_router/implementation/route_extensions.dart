@@ -75,8 +75,9 @@ extension PBTabRouteExtension on PBTabRoute {
           currentIndex: currentIndex,
           itemsState: itemsState.map((e) {
             return PBTabBarItemState(
-              currentLocation: e.currentLocation,
-              rootRoutePath: e.item.rootRoutePath,
+              currentLocation: e.currentLocation.mapToPBRouteLocation(),
+              rootRouteLocation:
+                  e.item.rootRouteLocation.mapToPBRouteLocation(),
             );
           }).toList(),
           body: child,
@@ -95,9 +96,13 @@ extension PBTabRouteItemExtension on PBTabRouteItem {
     ValueGetter<List<PBAppRouterBlocProvider>>? providers,
   ) {
     return router.StackedNavigationItem(
-      rootRoutePath: baseRoute.fullpath,
+      rootRouteLocation: router.AppRouterLocation(
+        path: baseRoute.fullpath,
+        name: baseRoute.name,
+      ),
       navigatorKey: navigatorKey,
-      providers: () => providers?.call().map((e) => e.blocProvider).toList() ?? [],
+      providers: () =>
+          providers?.call().map((e) => e.blocProvider).toList() ?? [],
     );
   }
 }

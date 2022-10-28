@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_router_bloc_provider.dart';
 import 'app_router_builder_helper.dart';
+import 'app_router_location.dart';
 import 'app_router_page_state.dart';
 import 'configuration.dart';
 import 'route.dart';
@@ -43,7 +44,7 @@ class AppRouterBuilder {
         context,
         AppRouterPageState(
           name: null,
-          fullpath: routerPaths.location!,
+          fullpath: routerPaths.location!.path,
         ),
         _buildNavigator(
           onPop: onPop,
@@ -139,7 +140,7 @@ class AppRouterBuilder {
   Widget _buildNavigatorOnlyWithError({
     required BuildContext context,
     required _AppRouterRouteBuilderError e,
-    required String location,
+    required AppRouterLocation location,
     required ValueSetter<dynamic> onPop,
     required GlobalKey<NavigatorState> navigatorKey,
   }) {
@@ -158,12 +159,12 @@ class AppRouterBuilder {
 
   Page _buildErrorPage({
     required BuildContext context,
-    required String location,
+    required AppRouterLocation location,
     _AppRouterRouteBuilderError? builderError,
   }) {
     final state = AppRouterPageState(
-      fullpath: location,
-      name: null,
+      fullpath: location.path,
+      name: location.name,
       exception: Exception(builderError),
     );
 

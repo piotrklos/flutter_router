@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:example/pages/home/accounts/accounts/accounts_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app_router/interface/router.dart';
@@ -36,7 +37,7 @@ class RelationshipPage extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        PBAppRouter.of(context).go("/relationship/accounts", extra: name);
+        PBAppNavigator.of(context).goNamed(AccountsPage.name, extra: name);
       },
       child: Container(
         color: Colors.grey

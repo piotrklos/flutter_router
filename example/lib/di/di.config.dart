@@ -31,7 +31,7 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.lazySingleton<_i6.MessagesCubit>(() => _i6.MessagesCubit());
   gh.factory<_i7.MessagesDetailsCubit>(() => _i7.MessagesDetailsCubit());
   gh.lazySingleton<_i8.MoreCubit>(() => _i8.MoreCubit());
-  gh.factory<_i9.PBAppRouter>(() => _i11.AppRotuerImplementation());
+  gh.factory<_i9.PBAppNavigator>(() => _i11.AppRotuerImplementation());
   gh.factoryParam<_i12.SettingsCubit, _i8.MoreCubit?, dynamic>(
       (_moreCubit, _) => _i12.SettingsCubit(_moreCubit));
   gh.factory<_i13.UserService>(() => _i13.UserService());

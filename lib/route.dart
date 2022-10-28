@@ -8,9 +8,11 @@ import 'typedef.dart';
 
 abstract class BaseAppRoute extends Equatable {
   final List<BaseAppRoute> routes;
+  final String name;
 
   const BaseAppRoute._({
     this.routes = const <BaseAppRoute>[],
+    required this.name,
   });
 
   @override
@@ -34,7 +36,6 @@ abstract class BaseAppRoute extends Equatable {
 /// Base Page route
 class AppPageRoute extends BaseAppRoute {
   final String path;
-  final String name;
   final GlobalKey<NavigatorState>? parentNavigatorKey;
   final AppRouterWidgetBuilder builder;
   final AppRouterSkip? skip;
@@ -52,7 +53,7 @@ class AppPageRoute extends BaseAppRoute {
 
   AppPageRoute({
     required this.path,
-    required this.name,
+    required String name,
     required this.builder,
     this.skip,
     List<BaseAppRoute> routes = const <BaseAppRoute>[],
@@ -70,6 +71,7 @@ class AppPageRoute extends BaseAppRoute {
         _onPush = onPush,
         super._(
           routes: routes,
+          name: name,
         );
 
   void onPush(AppRouteProvidersBuilder cubitGetter) {
@@ -128,6 +130,7 @@ abstract class ShellRouteBase extends BaseAppRoute {
   })  : _onPop = onPop,
         super._(
           routes: routes,
+          name: "",
         );
 
   GlobalKey<NavigatorState> navigatorKeyForChildRoute(BaseAppRoute route);

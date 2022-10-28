@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'app_router_bloc_provider.dart';
+import 'app_router_location.dart';
 import 'configuration.dart';
 import 'route.dart';
 import 'router_exception.dart';
@@ -71,7 +72,7 @@ class RouteFinder {
           return null;
         }
         final fullPath = PathUtils.joinPaths(
-          routerPaths.location!,
+          routerPaths.location!.path,
           childRoute.path,
         );
 
@@ -216,7 +217,16 @@ class RouterPaths extends Equatable {
 
   bool get isNotEmpty => _routes.isNotEmpty;
 
-  String? get location => _routes.lastOrNull?.fullPath;
+  AppRouterLocation? get location {
+    final lastRoute = _routes.lastOrNull;
+    if (lastRoute == null) {
+      return null;
+    }
+    return AppRouterLocation(
+      path: lastRoute.fullPath,
+      name: lastRoute.route.name,
+    );
+  }
 
   Object? get extra => _routes.lastOrNull?.extra;
 

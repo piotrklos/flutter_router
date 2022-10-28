@@ -54,10 +54,11 @@ class TabBarPage extends StatelessWidget {
     //     curve: Curves.linear,
     //   );
     // } else
-    if (PBAppRouter.of(context).currentLocation == itemState.currentLocation) {
-      PBAppRouter.of(context).go(itemState.rootRoutePath);
+    if (PBAppNavigator.of(context).currentLocation ==
+        itemState.currentLocation) {
+      PBAppNavigator.of(context).goNamed(itemState.rootRouteLocation.name);
     } else {
-      PBAppRouter.of(context).go(itemState.currentLocation);
+      PBAppNavigator.of(context).goNamed(itemState.currentLocation.name);
     }
   }
 }

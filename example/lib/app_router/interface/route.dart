@@ -35,6 +35,13 @@ abstract class IRoute {
     }
     return "";
   }
+
+  String get name {
+    if (this is PBPageRoute) {
+      return (this as PBPageRoute)._name;
+    }
+    return "";
+  }
 }
 
 class PBTabRoute extends IRoute {
@@ -52,7 +59,7 @@ class PBTabRoute extends IRoute {
 }
 
 class PBPageRoute extends IRoute {
-  final String name;
+  final String _name;
   final String _path;
   final PBAppRouteWidgetBuilder builder;
   final PBAppRouteSkipper? skipper;
@@ -62,13 +69,14 @@ class PBPageRoute extends IRoute {
   )? providersBuilder;
 
   PBPageRoute({
-    required this.name,
+    required String name,
     String? path,
     required this.builder,
     this.parentNavigatorKey,
     this.providersBuilder,
     this.skipper,
-  }) : _path = path ?? name;
+  })  : _path = path ?? name,
+        _name = name;
 
   String get path => _path;
 }

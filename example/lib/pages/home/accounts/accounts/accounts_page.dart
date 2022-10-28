@@ -1,4 +1,8 @@
 import 'package:example/app_router/interface/router.dart';
+import 'package:example/pages/home/accounts/accounts_details_page.dart';
+import 'package:example/pages/home/messages/messages_details_page.dart';
+import 'package:example/pages/home/more/more_page.dart';
+import 'package:example/pages/home/more/settings/helper/helper_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,38 +31,34 @@ class AccountsPage extends StatelessWidget {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                PBAppRouter.of(context).go(
-                  "/relationship/accounts/details",
-                );
+                PBAppNavigator.of(context).goNamed(AccountsDetailsPage.name);
               },
               child: const Text("Go to Details"),
             ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                PBAppRouter.of(context).go(
-                  "/messages/details",
-                );
+                PBAppNavigator.of(context).goNamed(MessagesDetailsPage.name);
               },
               child: const Text("Go to Message Details Page"),
             ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                PBAppRouter.of(context).go(
-                  "/more",
-                );
+                PBAppNavigator.of(context).goNamed(MorePage.name);
               },
               child: const Text("Go to More Page"),
             ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                PBAppRouter.of(context).go(
-                  "/more/settings/helper",
+                PBAppNavigator.of(context)
+                    .goNamed(
+                  HelperPage.name,
                   backToParent: true,
                   extra: "Hello from accounts",
-                ).then((value) {
+                )
+                    .then((value) {
                   print("value $value");
                 });
               },

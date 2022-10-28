@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'inherited_router.dart';
+import 'location.dart';
 
-abstract class PBAppRouter<C extends Object> {
+abstract class PBAppNavigator<C extends Object> {
   BackButtonDispatcher? get backButtonDispatcher;
 
   RouteInformationParser<C> get routeInformationParser;
@@ -13,22 +14,11 @@ abstract class PBAppRouter<C extends Object> {
 
   Future<void> init();
 
-  Future<T?> go<T extends Object?>(
-    String location, {
-    Object? extra,
-    bool backToParent = false,
-  });
-
   /// completer work only when [backToParent] is true
   Future<T?> goNamed<T extends Object?>(
-    String name, {
+    String pageName, {
     Object? extra,
     bool backToParent = false,
-  });
-
-  Future<T?> push<T extends Object?>(
-    String location, {
-    Object? extra,
   });
 
   Future<T?> pushNamed<T extends Object?>(
@@ -38,9 +28,9 @@ abstract class PBAppRouter<C extends Object> {
 
   void pop<T extends Object?>([T? result]);
 
-  String? get currentLocation;
+  PBRouteLocation? get currentLocation;
 
-  static PBAppRouter of(BuildContext context) {
+  static PBAppNavigator of(BuildContext context) {
     final InheritedPBAppRouter? inherited =
         context.dependOnInheritedWidgetOfExactType<InheritedPBAppRouter>();
     return inherited!.appRouter;

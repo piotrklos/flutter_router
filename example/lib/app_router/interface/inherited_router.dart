@@ -12,7 +12,7 @@ class InheritedPBAppRouter extends InheritedWidget {
           key: key,
         );
 
-  final PBAppRouter appRouter;
+  final PBAppNavigator appRouter;
 
   @override
   bool updateShouldNotify(covariant InheritedPBAppRouter oldWidget) {

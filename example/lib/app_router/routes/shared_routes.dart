@@ -10,7 +10,7 @@ class SharedRoutes {
 
   SharedRoutes(this.globalKey) {
     final _startRoute = PBPageRoute(
-      name: "start",
+      name: StartPage.name,
       path: "",
       builder: (_, __) {
         return const StartPage();
@@ -19,7 +19,7 @@ class SharedRoutes {
     );
 
     final _sharedRoute = PBPageRoute(
-      name: "shared",
+      name: SharedPage.name,
       builder: (_, state) {
         return SharedPage(
           sharedObject:

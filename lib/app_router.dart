@@ -7,11 +7,13 @@ export 'app_router_page_state.dart';
 export 'route.dart';
 export 'stacked_navigation_shell.dart';
 export 'app_router_bloc_provider.dart';
+export 'app_router_location.dart';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'app_router_cubit_provider.dart';
+import 'app_router_location.dart';
 import 'configuration.dart';
 import 'information_parser.dart';
 import 'information_provider.dart';
@@ -45,8 +47,8 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     );
 
     _cubitProvider = AppRouterCubitProvider(
-      // _configuration,
-    );
+        // _configuration,
+        );
 
     _routeInformationParser = AppRouteInformationParser(
       RouteFinder(_configuration),
@@ -83,8 +85,8 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
 
   RouterDelegate<RouterPaths> get routerDelegate => _routerDelegate;
 
-  String? get currentLocation =>
-      _routerDelegate.currentConfiguration?.location?.toString();
+  AppRouterLocation? get currentLocation =>
+      _routerDelegate.currentConfiguration?.location;
 
   String _fullPathForName(String name) => _configuration.getFullPathForName(
         name,
