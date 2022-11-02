@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -46,6 +47,11 @@ class AppPageRoute extends BaseAppRoute {
   final List<AppRouterBlocProvider> _tempProvidersList = [];
   final VoidCallback? _onPop;
   final VoidCallback? _onPush;
+
+  @visibleForTesting
+  void addTempProvidersList(List<AppRouterBlocProvider> providers) {
+    _tempProvidersList.addAll(providers);
+  }
 
   List<AppRouterBlocProvider> get providers {
     return _tempProvidersList;
@@ -223,7 +229,6 @@ class MultiShellRoute extends ShellRouteBase {
         assert(child is Navigator);
         return StackedNavigationShell(
           currentNavigator: child as Navigator,
-          currentRouterState: state,
           stackItems: stackItems,
           scaffoldBuilder: scaffoldBuilder,
         );
@@ -233,14 +238,13 @@ class MultiShellRoute extends ShellRouteBase {
 
   @override
   GlobalKey<NavigatorState> navigatorKeyForChildRoute(BaseAppRoute route) {
-    final baseRoute = routes.firstWhere((e) => e.isChild(route));
-
-    final int routeIndex = routes.indexOf(baseRoute);
-    if (routeIndex < 0) {
+    final baseRoute = routes.firstWhereOrNull((e) => e.isChild(route));
+    if (baseRoute == null) {
       throw AppRouterException(
         'Route $route is not a child of this MultiShellRoute $this',
       );
     }
+    final int routeIndex = routes.indexOf(baseRoute);
     return navigatorKeys[routeIndex];
   }
 

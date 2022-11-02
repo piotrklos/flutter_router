@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'router_exception.dart';
 import 'router_skipper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -47,42 +48,65 @@ class AppRouteInformationParser extends RouteInformationParser<RouterPaths> {
     } catch (_) {
       routerPaths = RouterPaths.empty();
     }
-    final FutureOr<RouterPaths> skipResult = appRouterSkipper.skip(
-      SynchronousFuture<RouterPaths>(routerPaths),
-      routeFinder,
-    );
-    if (skipResult is RouterPaths) {
-      return _processSkipResult(skipResult, routeInformation);
-    }
 
-    return skipResult.then(
-      (value) {
-        return _processSkipResult(value, routeInformation);
-      },
+    try {
+      final skipResult = appRouterSkipper.skip(
+        SynchronousFuture<RouterPaths>(routerPaths),
+        routeFinder,
+      );
+      if (skipResult is RouterPaths) {
+        return _processSkipResult(skipResult, routeInformation);
+      }
+
+      return skipResult.then(
+        (value) {
+          return _processSkipResult(value, routeInformation);
+        },
+        onError: (error, stackTrace) {
+          AppRouterException? routerException;
+          if (error is AppRouterException) {
+            routerException = error;
+          }
+          return _processSkipError(routeInformation,
+              exception: routerException);
+        },
+      );
+    } catch (error) {
+      AppRouterException? routerException;
+      if (error is AppRouterException) {
+        routerException = error;
+      }
+      return _processSkipError(routeInformation, exception: routerException);
+    }
+  }
+
+  RouterPaths _processSkipError(
+    RouteInformation routeInformation, {
+    AppRouterException? exception,
+  }) {
+    return RouterPaths(
+      [
+        FoundRoute.error(
+          fullPath: routeInformation.location!,
+          exception: exception ??
+              Exception(
+                'no routes for location: ${routeInformation.location}!',
+              ),
+        ),
+      ],
     );
   }
 
-  Future<RouterPaths> _processSkipResult(
+  RouterPaths _processSkipResult(
     RouterPaths routerPaths,
     RouteInformation routeInformation,
   ) {
     if (routerPaths.isEmpty) {
-      return SynchronousFuture<RouterPaths>(
-        RouterPaths(
-          [
-            FoundRoute.error(
-              fullPath: routeInformation.location!,
-              exception: Exception(
-                'no routes for location: ${routeInformation.location}!',
-              ),
-            ),
-          ],
-        ),
-      );
+      return _processSkipError(routeInformation);
     }
     cubitProvider.setNewRouterPaths(routerPaths);
 
-    return SynchronousFuture<RouterPaths>(routerPaths);
+    return routerPaths;
   }
 
   @override

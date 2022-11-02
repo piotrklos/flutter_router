@@ -1,45 +1,18 @@
-import 'package:app_router/typedef.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_router_location.dart';
-import 'app_router_page_state.dart';
 import 'app_router_router.dart';
-
-class StackedNavigationItem {
-  final AppRouterLocation rootRouteLocation;
-  final GlobalKey<NavigatorState> navigatorKey;
-  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>?
-      providers;
-
-  StackedNavigationItem({
-    required this.rootRouteLocation,
-    required this.navigatorKey,
-    this.providers,
-  });
-}
-
-class StackedNavigationItemState {
-  final StackedNavigationItem item;
-  AppRouterLocation? lastLocation;
-  Navigator? navigator;
-
-  StackedNavigationItemState(this.item);
-
-  AppRouterLocation get currentLocation =>
-      lastLocation ?? item.rootRouteLocation;
-}
+import 'typedef.dart';
 
 class StackedNavigationShell extends StatefulWidget {
   final Navigator currentNavigator;
-  final AppRouterPageState currentRouterState;
   final List<StackedNavigationItem> stackItems;
   final StackedNavigationScaffoldBuilder? scaffoldBuilder;
 
   const StackedNavigationShell({
     required this.currentNavigator,
-    required this.currentRouterState,
     required this.stackItems,
     this.scaffoldBuilder,
     Key? key,
@@ -154,4 +127,28 @@ class _StackedNavigationShellState extends State<StackedNavigationShell>
       child: child,
     );
   }
+}
+
+class StackedNavigationItem {
+  final AppRouterLocation rootRouteLocation;
+  final GlobalKey<NavigatorState> navigatorKey;
+  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>?
+      providers;
+
+  StackedNavigationItem({
+    required this.rootRouteLocation,
+    required this.navigatorKey,
+    this.providers,
+  });
+}
+
+class StackedNavigationItemState {
+  final StackedNavigationItem item;
+  AppRouterLocation? lastLocation;
+  Navigator? navigator;
+
+  StackedNavigationItemState(this.item);
+
+  AppRouterLocation get currentLocation =>
+      lastLocation ?? item.rootRouteLocation;
 }

@@ -52,6 +52,7 @@ class InsightsPage extends StatelessWidget {
                 )
                     .then((value) {
                   if (value != null) {
+                    // ignore: avoid_print
                     print("Value from push: $value");
                   }
                 });

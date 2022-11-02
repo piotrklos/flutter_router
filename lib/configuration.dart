@@ -16,6 +16,8 @@ class AppRouterConfiguration {
     createNamedMap(parentFullPath: '', routes: topLevelRoutes);
   }
 
+  Map<String, String> get nameToPathMap => _nameToPathMap;
+
   @visibleForTesting
   void createNamedMap({
     required String parentFullPath,

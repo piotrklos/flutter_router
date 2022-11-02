@@ -36,24 +36,24 @@ class RouteFinder {
     );
   }
 
-  RouterPaths? proccessSkipToPaths({
+  RouterPaths proccessSkipToPaths({
     required RouterPaths routerPaths,
     required SkipOption skipOption,
     required int index,
   }) {
     if (routerPaths.length < index) {
-      return null;
+      throw AppRouterException("Router paths must be greater than index!");
     }
     final foundRoute = routerPaths.routeForIndex(index);
     if (foundRoute == null) {
-      return null;
+      throw AppRouterException("Could not find route for index!");
     }
     if (routerPaths.length - 1 > index) {
       final newPaths = routerPaths._routes.whereNot(
         (e) => e == foundRoute,
       );
       if (newPaths.isEmpty) {
-        return null;
+        throw AppRouterException("New paths can not be empty!");
       }
       return RouterPaths(
         newPaths.toList(),
@@ -61,6 +61,9 @@ class RouteFinder {
     }
     switch (skipOption) {
       case SkipOption.goToParent:
+        if (index == 0) {
+          throw AppRouterException("Top route can not skip to parent!");
+        }
         final newRoutes = routerPaths._routes;
         newRoutes.removeAt(index);
         return RouterPaths(
@@ -69,7 +72,7 @@ class RouteFinder {
       case SkipOption.goToChild:
         final childRoute = foundRoute.route.routes.firstOrNull;
         if (childRoute == null || childRoute is! AppPageRoute) {
-          return null;
+          throw AppRouterException("Child route can not be empty!");
         }
         final fullPath = PathUtils.joinPaths(
           routerPaths.location!.path,
@@ -83,7 +86,7 @@ class RouteFinder {
           extra: null,
         );
         if (childFoundRoute == null) {
-          return null;
+          throw AppRouterException("Could not create route for child!");
         }
         final newRoutes = routerPaths._routes;
         newRoutes.removeAt(index);
@@ -209,6 +212,9 @@ class RouterPaths extends Equatable {
         _shouldBackToParent = false,
         _parentStack = null;
 
+  @visibleForTesting
+  List<FoundRoute> get routes => _routes;
+
   bool get shouldBackToParent => _shouldBackToParent;
 
   RouterPaths? get parentRouterPaths => _parentStack;
@@ -235,7 +241,7 @@ class RouterPaths extends Equatable {
   FoundRoute get last => _routes.last;
 
   FoundRoute? routeForIndex(int index) {
-    if (length < index) {
+    if (length <= index) {
       return null;
     }
     return _routes[index];
@@ -270,9 +276,18 @@ class RouterPaths extends Equatable {
   FoundRoute popLast() {
     final removed = _routes.removeLast();
 
+    if (_routes.isEmpty) {
+      throw AppRouterException("You popped the last page off on the stack!");
+    }
+
     while (_routes.isNotEmpty && _routes.last.route is ShellRouteBase) {
       _routes.removeLast();
     }
+
+    if (_routes.isEmpty) {
+      throw AppRouterException("You popped the last page off on the stack!");
+    }
+
     return removed;
   }
 

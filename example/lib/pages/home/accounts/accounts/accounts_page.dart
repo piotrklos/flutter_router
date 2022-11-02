@@ -60,6 +60,7 @@ class AccountsPage extends StatelessWidget {
                   extra: "Hello from accounts",
                 )
                     .then((value) {
+                  // ignore: avoid_print
                   print("value $value");
                 });
               },

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import 'app_router_page_state.dart';
 import 'configuration.dart';
 import 'route.dart';
@@ -17,7 +19,7 @@ class AppRouterSkipper {
     RouteFinder routeFinder,
   ) {
     if (routerPathsFuture is RouterPaths) {
-      return _processSkip(
+      return processSkip(
         routerPathsFuture,
         routeFinder: routeFinder,
         index: routerPathsFuture.length - 1,
@@ -25,7 +27,7 @@ class AppRouterSkipper {
     }
     return routerPathsFuture.then<RouterPaths>(
       (value) {
-        return _processSkip(
+        return processSkip(
           value,
           routeFinder: routeFinder,
           index: value.length - 1,
@@ -34,19 +36,20 @@ class AppRouterSkipper {
     );
   }
 
-  FutureOr<RouterPaths> _processSkip(
+  @visibleForTesting
+  FutureOr<RouterPaths> processSkip(
     RouterPaths routerPaths, {
     required RouteFinder routeFinder,
     required int index,
   }) {
-    if (index == 0) {
+    if (index < 0) {
       return routerPaths;
     }
     if (routerPaths.isEmpty) {
       return routerPaths;
     }
 
-    final FutureOr<SkipOption?> skipResult = _getSkipper(
+    final FutureOr<SkipOption?> skipResult = getSkipper(
       routerPaths,
       index,
     );
@@ -78,27 +81,27 @@ class AppRouterSkipper {
     required int index,
   }) {
     if (skipOption != null) {
-      final RouterPaths newRouterPaths = _getRouterPaths(
-        skipOption,
-        routerPaths,
-        routeFinder,
-        index,
+      final RouterPaths newRouterPaths = routeFinder.proccessSkipToPaths(
+        skipOption: skipOption,
+        routerPaths: routerPaths,
+        index: index,
       );
 
-      return _processSkip(
+      return processSkip(
         newRouterPaths,
         index: index - 1,
         routeFinder: routeFinder,
       );
     }
-    return _processSkip(
+    return processSkip(
       routerPaths,
       index: index - 1,
       routeFinder: routeFinder,
     );
   }
 
-  FutureOr<SkipOption?> _getSkipper(
+  @visibleForTesting
+  FutureOr<SkipOption?> getSkipper(
     RouterPaths routerPaths,
     int index,
   ) {
@@ -118,38 +121,5 @@ class AppRouterSkipper {
       );
     }
     return routeSkipResult;
-  }
-
-  RouterPaths _getRouterPaths(
-    SkipOption skipOption,
-    RouterPaths routerPaths,
-    RouteFinder finder,
-    int index,
-  ) {
-    try {
-      final newRoutes = finder.proccessSkipToPaths(
-        routerPaths: routerPaths,
-        skipOption: skipOption,
-        index: index,
-      );
-      if (newRoutes == null) {
-        throw AppRouterException("Could not find child to last route!");
-      }
-      return newRoutes;
-    } on AppRouterException catch (e) {
-      return _errorScreen(e.message, "");
-    }
-  }
-
-  RouterPaths _errorScreen(String errorMessage, String location) {
-    final Exception error = Exception(errorMessage);
-    return RouterPaths(
-      [
-        FoundRoute.error(
-          fullPath: location,
-          exception: error,
-        ),
-      ],
-    );
   }
 }

@@ -16,6 +16,8 @@ class AppRouterDelegate extends RouterDelegate<RouterPaths>
   final AppRouterBuilder _appRouterBuilder;
 
   RouterPaths _routerPaths = RouterPaths.empty();
+  @visibleForTesting
+  RouterPaths get routerPaths => _routerPaths;
   final Map<String, int> _pushCounts = {};
 
   AppRouterDelegate({

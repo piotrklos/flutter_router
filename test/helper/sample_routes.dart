@@ -6,7 +6,7 @@ import 'package:app_router/route.dart';
 import 'package:app_router/stacked_navigation_shell.dart';
 import 'package:app_router/typedef.dart';
 import 'package:flutter/material.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockStartPageCubit extends Mock implements AppRouterBlocProvider {}
 

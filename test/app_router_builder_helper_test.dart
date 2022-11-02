@@ -1,10 +1,7 @@
 import 'package:app_router/app_router_builder_helper.dart';
-import 'package:app_router/app_router_router.dart';
-import 'package:app_router/route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 
 void main() {
   group("isMaterialApp", () {

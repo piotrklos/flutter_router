@@ -1,4 +1,4 @@
-class AppRouterException {
+class AppRouterException implements Exception {
   final String message;
 
   AppRouterException(this.message);

@@ -72,13 +72,13 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
 
   BackButtonDispatcher? get backButtonDispatcher => RootBackButtonDispatcher();
 
-  RouteInformationParser<RouterPaths> get routeInformationParser =>
+  AppRouteInformationParser get routeInformationParser =>
       _routeInformationParser;
 
-  RouteInformationProvider? get routeInformationProvider =>
+  AppRouteInformationProvider? get routeInformationProvider =>
       _routeInformationProvider;
 
-  RouterDelegate<RouterPaths> get routerDelegate => _routerDelegate;
+  AppRouterDelegate get routerDelegate => _routerDelegate;
 
   AppRouterLocation? get currentLocation =>
       _routerDelegate.currentConfiguration?.location;
@@ -124,35 +124,19 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     Object? extra,
   }) async {
     final Completer<T> completer = Completer<T>();
-    final routerPaths = await _routeInformationParser.parseRouteInformation(
+    _routeInformationParser
+        .parseRouteInformation(
       RouteInformation(location: location, state: extra),
-    );
-    _routerDelegate.push(routerPaths.last, completer);
+    )
+        .then((value) {
+      _routerDelegate.push(value.last, completer);
+    });
+
     return completer.future;
   }
 
   Future<T?> pushNamed<T extends Object?>(String name, {Object? extra}) {
     return push(_fullPathForName(name), extra: extra);
-  }
-
-  void replace(String location, {Object? extra}) {
-    _routeInformationParser
-        .parseRouteInformation(
-      RouteInformation(
-        location: location,
-        state: extra,
-      ),
-    )
-        .then((routerPaths) {
-      _routerDelegate.replace(routerPaths.last);
-    });
-  }
-
-  void replaceNamed(String name, {Object? extra}) {
-    replace(
-      _fullPathForName(name),
-      extra: extra,
-    );
   }
 
   bool canPop() => _routerDelegate.canPop();

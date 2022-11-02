@@ -30,7 +30,8 @@ class StartPage extends StatelessWidget {
             TextButton(
               onPressed: () {
                 UserService.isInternal = true;
-                PBAppNavigator.of(context).goNamed(RelationshipPage.name);
+                PBAppNavigator.of(context).pushNamed("shared");
+                // PBAppNavigator.of(context).goNamed(RelationshipPage.name);
               },
               child: const Text("Login Internal user"),
             ),

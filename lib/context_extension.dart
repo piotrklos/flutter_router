@@ -48,18 +48,4 @@ extension AppRouterExtension on BuildContext {
   void pop<T extends Object?>([T? result]) {
     AppRouter.of(this).pop(result);
   }
-
-  void replace(
-    String location, {
-    Object? extra,
-  }) {
-    AppRouter.of(this).replace(location, extra: extra);
-  }
-
-  void replaceNamed(
-    String name, {
-    Object? extra,
-  }) {
-    AppRouter.of(this).replaceNamed(name, extra: extra);
-  }
 }
