@@ -84,9 +84,13 @@ class AppRouterCubitProvider {
     required RouterPaths newRouterPaths,
   }) {
     final currentRoutes = newRouterPaths.allRoutes;
-    return routerPathsToRemove.expand((e) => e.allRoutes).where((route) {
-      return !currentRoutes.contains(route);
-    }).toList();
+    return routerPathsToRemove
+        .expand((e) => e.allRoutes.reversed)
+        .where((route) {
+          return !currentRoutes.contains(route);
+        })
+        .toSet()
+        .toList();
   }
 
   @visibleForTesting
@@ -108,7 +112,14 @@ class AppRouterCubitProvider {
       return [];
     }
 
-    final newRootRoute = newRouterPaths.baseAppPageRoute();
+    final newFirstShellRoute =
+        newRouterPaths.firstAppRouteOfType<ShellRouteBase>();
+    AppPageRoute? shellRouteFirstsPage;
+    if (newFirstShellRoute != null) {
+      shellRouteFirstsPage = newRouterPaths.firstAppPageRouteForShell(
+        newFirstShellRoute,
+      );
+    }
 
     final List<RouterPaths> toRemoveList = [];
 
@@ -118,8 +129,12 @@ class AppRouterCubitProvider {
         if (routerPaths.isEmpty) {
           return true;
         }
-        final firstRoute = routerPaths.baseAppPageRoute();
-        return firstRoute == newRootRoute;
+        final shellRoute = routerPaths.firstAppRouteOfType<ShellRouteBase>();
+        if (newFirstShellRoute == shellRoute) {
+          return shellRouteFirstsPage ==
+              routerPaths.firstAppPageRouteForShell(shellRoute);
+        }
+        return true;
       }),
     );
 

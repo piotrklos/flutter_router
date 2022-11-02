@@ -9,13 +9,16 @@ typedef PageBuilderForAppType = Page<void> Function({
 });
 
 class AppRouterBuilderHelper {
-  bool _isMaterialApp(Element elem) =>
+  @visibleForTesting
+  bool isMaterialApp(Element elem) =>
       elem.findAncestorWidgetOfExactType<MaterialApp>() != null;
 
-  bool _isCupertinoApp(Element elem) =>
+  @visibleForTesting
+  bool isCupertinoApp(Element elem) =>
       elem.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
-  CupertinoPage<void> _pageBuilderForCupertinoApp({
+  @visibleForTesting
+  CupertinoPage<void> pageBuilderForCupertinoApp({
     required LocalKey key,
     required String? name,
     required String restorationId,
@@ -29,7 +32,8 @@ class AppRouterBuilderHelper {
     );
   }
 
-  MaterialPage<void> _pageBuilderForMaterialApp({
+  @visibleForTesting
+  MaterialPage<void> pageBuilderForMaterialApp({
     required LocalKey key,
     required String? name,
     required String restorationId,
@@ -44,13 +48,14 @@ class AppRouterBuilderHelper {
   }
 
   /// without any transitions
-  Page<void> _pageBuilderForWidgetApp({
+  @visibleForTesting
+  Page<void> pageBuilderForWidgetApp({
     required LocalKey key,
     required String? name,
     required String restorationId,
     required Widget child,
   }) {
-    return _NoTransitionPage<void>(
+    return NoTransitionPage<void>(
       name: name,
       key: key,
       restorationId: restorationId,
@@ -64,20 +69,21 @@ class AppRouterBuilderHelper {
     // can be null during testing
     final Element? elem = context is Element ? context : null;
 
-    if (elem != null && _isMaterialApp(elem)) {
-      return _pageBuilderForMaterialApp;
-    } else if (elem != null && _isCupertinoApp(elem)) {
-      return _pageBuilderForCupertinoApp;
+    if (elem != null && isMaterialApp(elem)) {
+      return pageBuilderForMaterialApp;
+    } else if (elem != null && isCupertinoApp(elem)) {
+      return pageBuilderForCupertinoApp;
     } else {
-      return _pageBuilderForWidgetApp;
+      return pageBuilderForWidgetApp;
     }
   }
 }
 
-class _NoTransitionPage<T> extends Page<T> {
+@visibleForTesting
+class NoTransitionPage<T> extends Page<T> {
   final Widget child;
 
-  const _NoTransitionPage({
+  const NoTransitionPage({
     required this.child,
     LocalKey? key,
     String? name,
@@ -91,15 +97,15 @@ class _NoTransitionPage<T> extends Page<T> {
         );
 
   @override
-  Route<T> createRoute(BuildContext context) => _NoTransitionPageRoute<T>(this);
+  Route<T> createRoute(BuildContext context) => NoTransitionPageRoute<T>(this);
 }
 
-class _NoTransitionPageRoute<T> extends PageRoute<T> {
-  _NoTransitionPageRoute(
-    _NoTransitionPage<T> page,
+class NoTransitionPageRoute<T> extends PageRoute<T> {
+  NoTransitionPageRoute(
+    NoTransitionPage<T> page,
   ) : super(settings: page);
 
-  _NoTransitionPage<T> get _page => settings as _NoTransitionPage<T>;
+  NoTransitionPage<T> get _page => settings as NoTransitionPage<T>;
 
   @override
   Widget buildPage(

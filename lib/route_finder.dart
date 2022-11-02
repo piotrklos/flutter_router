@@ -241,12 +241,22 @@ class RouterPaths extends Equatable {
     return _routes[index];
   }
 
-  AppPageRoute? baseAppPageRoute() {
+  T? firstAppRouteOfType<T extends BaseAppRoute>() {
     return _routes
         .firstWhereOrNull(
-          (e) => e.route is AppPageRoute,
+          (e) => e.route is T,
         )
-        ?.route as AppPageRoute?;
+        ?.route as T?;
+  }
+
+  AppPageRoute? firstAppPageRouteForShell(ShellRouteBase? shellRoute) {
+    final index = _routes.indexWhere(
+      (e) => e.route == shellRoute,
+    );
+    if (index < 0) {
+      return null;
+    }
+    return _routes[index + 1].route as AppPageRoute?;
   }
 
   List<BaseAppRoute> get allRoutes {

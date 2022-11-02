@@ -5,5 +5,5 @@ abstract class AppRouterBlocProvider<T extends BlocBase> {
     return BlocProvider<T>.value(value: this as T);
   }
 
-  void close();
+  Future<void> close();
 }

@@ -90,7 +90,7 @@ class SettingsPage extends StatelessWidget {
     BuildContext context,
     ValueSetter<String> onChanged,
   ) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (ctx) {
         return Material(

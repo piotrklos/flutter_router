@@ -1,7 +1,10 @@
+import 'package:app_router/typedef.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'app_router_location.dart';
+import 'app_router_page_state.dart';
 import 'app_router_router.dart';
 
 class StackedNavigationItem {

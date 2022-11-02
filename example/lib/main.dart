@@ -31,6 +31,10 @@ class MyApp extends StatelessWidget {
       appRouter: routerInterface,
       child: routerInterface.getAppWidget(
         title: 'Flutter Demo',
+        localizationsDelegates: [
+          DefaultMaterialLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+        ],
         cupertinoThemeData: const CupertinoThemeData(
           brightness: Brightness.light,
           scaffoldBackgroundColor: Colors.white,
