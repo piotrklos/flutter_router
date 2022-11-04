@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'app_router.dart';
+import 'router.dart';
 
 class InheritedAppRouter extends InheritedWidget {
   const InheritedAppRouter({

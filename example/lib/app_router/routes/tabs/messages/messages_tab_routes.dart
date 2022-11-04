@@ -3,7 +3,7 @@ import '../../../../pages/home/messages/messages_page.dart';
 import '../../../interface/route.dart';
 
 class MessagesTabRoutes {
-  IRoute get baseRoute => _messagesRoute;
+  PBPageRoute get baseRoute => _messagesRoute;
 
   MessagesTabRoutes() {
     _init();

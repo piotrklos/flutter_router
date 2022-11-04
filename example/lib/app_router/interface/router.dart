@@ -10,11 +10,11 @@ abstract class PBAppNavigator {
     List<NavigatorObserver> observers = const [],
   });
 
-  /// completer work only when [backToParent] is true
+  /// completer work only when [backToCaller] is true
   Future<T?> goNamed<T extends Object?>(
     String pageName, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   });
 
   Future<T?> pushNamed<T extends Object?>(

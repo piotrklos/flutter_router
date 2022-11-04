@@ -9,6 +9,10 @@ class AppRouterLocation extends Equatable {
     required this.name,
   });
 
+  const AppRouterLocation.empty()
+      : name = "",
+        path = "";
+
   @override
   List<Object?> get props => [path, name];
 }

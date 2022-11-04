@@ -1,8 +1,6 @@
 import 'package:app_router/src/bloc_provider.dart';
-import 'package:app_router/src/location.dart';
 import 'package:app_router/src/route.dart';
 import 'package:app_router/src/router_exception.dart';
-import 'package:app_router/src/stacked_navigation_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -254,65 +252,64 @@ void main() {
     });
   });
 
-  group("MultiShellRoute", () {
+  group("StatefulShellRoute", () {
     final pageRoute = AppPageRoute(
       name: "name",
       builder: (_, __) => const SizedBox.shrink(),
       path: "/",
     );
 
-    test("Throw when routes is empty", () {
+    test("Throw when branches is empty", () {
       expect(() {
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: GlobalKey(),
-              rootRouteLocation: const AppRouterLocation(path: "", name: ""),
-            ),
-          ],
-          routes: const [],
+        StatefulShellRoute(
+          branches: const [],
+          builder: (_, __, child) => child,
         );
       }, throwsA(isAssertionError));
     });
 
-    test("Throw when stackItems is empty", () {
+    test("Throw when routes is empty", () {
       expect(() {
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: const [],
-          routes: [pageRoute],
+        StatefulShellRoute.rootRoutes(
+          routes: const [],
+          builder: (_, __, child) => child,
         );
       }, throwsA(isAssertionError));
     });
 
     test("Should throw when child key is different than shell key", () {
       expect(() {
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
+        StatefulShellRoute(
+          branches: [
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
+                name: "name",
+                builder: (_, __) => const SizedBox.shrink(),
+                path: "/",
+                parentNavigatorKey: GlobalKey(),
+              ),
               navigatorKey: GlobalKey(),
-              rootRouteLocation: const AppRouterLocation(path: "", name: ""),
             ),
           ],
-          routes: [
-            AppPageRoute(
-              name: "name",
-              builder: (_, __) => const SizedBox.shrink(),
-              path: "/",
-              parentNavigatorKey: GlobalKey(),
-            ),
-          ],
+          builder: (_, __, child) => child,
         );
       }, throwsA(isAssertionError));
     });
 
-    test("Should not throw when routes and stackItems are not empty", () {
-      MultiShellRoute.stackedNavigationShell(
-        stackItems: [
-          StackedNavigationItem(
-            navigatorKey: GlobalKey(),
-            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
+    test("Should not throw when branches is not empty", () {
+      StatefulShellRoute(
+        builder: (_, __, child) => child,
+        branches: [
+          ShellRouteBranch(
+            rootRoute: pageRoute,
           ),
         ],
+      );
+    });
+
+    test("Should not throw when routes is not empty", () {
+      StatefulShellRoute.rootRoutes(
+        builder: (_, __, child) => child,
         routes: [pageRoute],
       );
     });
@@ -320,14 +317,14 @@ void main() {
     test("Should return correct navigation key", () {
       final key = GlobalKey<NavigatorState>();
 
-      final route = MultiShellRoute.stackedNavigationShell(
-        stackItems: [
-          StackedNavigationItem(
+      final route = StatefulShellRoute(
+        branches: [
+          ShellRouteBranch(
+            rootRoute: pageRoute,
             navigatorKey: key,
-            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
           ),
         ],
-        routes: [pageRoute],
+        builder: (_, __, child) => child,
       );
       expect(route.navigatorKeyForChildRoute(pageRoute), key);
     });
@@ -338,14 +335,13 @@ void main() {
         builder: (_, __) => const SizedBox.shrink(),
         path: "/test",
       );
-      final route = MultiShellRoute.stackedNavigationShell(
-        stackItems: [
-          StackedNavigationItem(
-            navigatorKey: GlobalKey(),
-            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
+      final route = StatefulShellRoute(
+        builder: (_, __, child) => child,
+        branches: [
+          ShellRouteBranch(
+            rootRoute: pageRoute,
           ),
         ],
-        routes: [pageRoute],
       );
 
       expect(

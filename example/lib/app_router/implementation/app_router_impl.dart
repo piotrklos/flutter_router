@@ -49,11 +49,11 @@ class AppRotuerImplementation implements PBAppNavigator {
   Future<T?> go<T extends Object?>(
     String location, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     return appRouter.go<T>(
       location,
-      backToParent: backToParent,
+      backToCaller: backToCaller,
       extra: extra,
     );
   }
@@ -62,11 +62,11 @@ class AppRotuerImplementation implements PBAppNavigator {
   Future<T?> goNamed<T extends Object?>(
     String name, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     return appRouter.goNamed<T>(
       name,
-      backToParent: backToParent,
+      backToCaller: backToCaller,
       extra: extra,
     );
   }

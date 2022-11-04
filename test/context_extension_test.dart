@@ -1,4 +1,4 @@
-import 'package:app_router/src/app_router.dart';
+import 'package:app_router/src/router.dart';
 import 'package:app_router/src/context_extension.dart';
 import 'package:app_router/src/inherited_router.dart';
 import 'package:equatable/equatable.dart';
@@ -35,7 +35,7 @@ void main() {
       const resultObject = _TestObject(message: "result");
 
       when(
-        () => appRouter.go("test", backToParent: true, extra: extra),
+        () => appRouter.go("test", backToCaller: true, extra: extra),
       ).thenAnswer((_) => Future.value(resultObject));
       final key = GlobalKey();
       await tester.pumpWidget(InheritedAppRouter(
@@ -45,12 +45,12 @@ void main() {
 
       final result = await key.currentContext!.go(
         "test",
-        backToParent: true,
+        backToCaller: true,
         extra: extra,
       );
 
       verify(
-        () => appRouter.go("test", backToParent: true, extra: extra),
+        () => appRouter.go("test", backToCaller: true, extra: extra),
       ).called(1);
       expect(result, resultObject);
     });
@@ -76,7 +76,7 @@ void main() {
       const resultObject = _TestObject(message: "result");
 
       when(
-        () => appRouter.goNamed("test", backToParent: true, extra: extra),
+        () => appRouter.goNamed("test", backToCaller: true, extra: extra),
       ).thenAnswer((_) => Future.value(resultObject));
       final key = GlobalKey();
       await tester.pumpWidget(InheritedAppRouter(
@@ -86,12 +86,12 @@ void main() {
 
       final result = await key.currentContext!.goNamed(
         "test",
-        backToParent: true,
+        backToCaller: true,
         extra: extra,
       );
 
       verify(
-        () => appRouter.goNamed("test", backToParent: true, extra: extra),
+        () => appRouter.goNamed("test", backToCaller: true, extra: extra),
       ).called(1);
       expect(result, resultObject);
     });

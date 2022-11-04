@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'location.dart';
 import 'route.dart';
 import 'router_exception.dart';
 import 'utils.dart';
@@ -49,5 +50,36 @@ class AppRouterConfiguration {
       throw AppRouterException("Unknown route name: $name");
     }
     return path;
+  }
+
+  AppRouterLocation locationForRoute(BaseAppRoute route) {
+    return _locationForRoute(route, '', topLevelRoutes) ??
+        const AppRouterLocation.empty();
+  }
+
+  static AppRouterLocation? _locationForRoute(
+    BaseAppRoute targetRoute,
+    String parentFullpath,
+    List<BaseAppRoute> routes,
+  ) {
+    for (final route in routes) {
+      final String fullPath = (route is AppPageRoute)
+          ? PathUtils.joinPaths(parentFullpath, route.path)
+          : parentFullpath;
+
+      if (route == targetRoute) {
+        return AppRouterLocation(path: fullPath, name: route.name);
+      } else {
+        final AppRouterLocation? subRoutePath = _locationForRoute(
+          targetRoute,
+          fullPath,
+          route.routes,
+        );
+        if (subRoutePath != null) {
+          return subRoutePath;
+        }
+      }
+    }
+    return null;
   }
 }

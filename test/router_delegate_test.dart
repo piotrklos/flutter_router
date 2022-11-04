@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import "package:app_router/src/app_router.dart";
+import 'package:app_router/src/router.dart';
 import "package:app_router/src/route.dart";
 import 'package:app_router/src/router_exception.dart';
 import "package:flutter/material.dart";
@@ -73,7 +73,7 @@ void main() {
       router.go("/b");
       await tester.pumpAndSettle();
       final parentRoutes = router.routerDelegate.routerPaths;
-      router.go("/a/c", backToParent: true);
+      router.go("/a/c", backToCaller: true);
       await tester.pumpAndSettle();
 
       router.routerDelegate.pop();
@@ -91,7 +91,7 @@ void main() {
       await tester.pumpAndSettle();
       final parentRoutes = router.routerDelegate.routerPaths;
 
-      router.go("/a/c", backToParent: true).then((value) {
+      router.go("/a/c", backToCaller: true).then((value) {
         completer.complete(value);
       });
       await tester.pumpAndSettle();

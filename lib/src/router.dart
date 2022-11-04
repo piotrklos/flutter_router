@@ -37,9 +37,10 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     );
 
     _cubitProvider = AppRouterCubitProvider();
+    final routerFinder = RouteFinder(_configuration);
 
     _routeInformationParser = AppRouteInformationParser(
-      RouteFinder(_configuration),
+      routerFinder,
       _cubitProvider,
       AppRouterSkipper(_configuration),
     );
@@ -63,6 +64,7 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
       errorBuilder: errorBuilder,
       observers: [...observers ?? [], this],
       restorationScopeId: restorationScopeId,
+      routerFinder: routerFinder,
       builderWithNavigator: (context, _, nav) {
         return InheritedAppRouter(
           appRouter: this,
@@ -89,18 +91,18 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
         name,
       );
 
-  /// completer work only when [backToParent] is true
+  /// completer work only when [backToCaller] is true
   Future<T?> go<T extends Object?>(
     String location, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) async {
     final Completer<T> completer = Completer<T>();
     _routeInformationProvider.value = RouteInformation(
       location: location,
       state: RouterInformationStateObject<T>(
         extra: extra,
-        backToParent: backToParent,
+        backToCaller: backToCaller,
         parentStack: _routerDelegate.currentConfiguration,
         completer: completer,
       ),
@@ -108,16 +110,16 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     return completer.future;
   }
 
-  /// completer work only when [backToParent] is true
+  /// completer work only when [backToCaller] is true
   Future<T?> goNamed<T extends Object?>(
     String name, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     return go(
       _fullPathForName(name),
       extra: extra,
-      backToParent: backToParent,
+      backToCaller: backToCaller,
     );
   }
 

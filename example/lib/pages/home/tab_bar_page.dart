@@ -1,32 +1,29 @@
+import 'package:app_router/app_router.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../app_router/interface/route.dart';
-import '../../app_router/interface/router.dart';
-import '../../app_router/interface/tab_bar_item_state.dart';
 
 class TabBarPage extends StatelessWidget {
-  final int currentIndex;
-  final List<PBTabBarItemState> itemsState;
-  final Widget body;
-  final List<PBTabRouteItem> tabRouteItems;
+  final Widget child;
+  final List<PBTabRouteItem> items;
 
   const TabBarPage({
-    required this.currentIndex,
-    required this.itemsState,
-    required this.body,
-    required this.tabRouteItems,
+    required this.child,
+    required this.items,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   @override
   Widget build(BuildContext context) {
+    final shellState = StatefulShellRoute.of(context);
+
     return Column(
       children: [
-        Expanded(child: body),
+        Expanded(child: child),
         CupertinoTabBar(
-          currentIndex: currentIndex,
+          currentIndex: shellState.currentIndex,
           iconSize: 16,
-          items: tabRouteItems
+          items: items
               .map(
                 (e) => BottomNavigationBarItem(
                   icon: Icon(
@@ -39,7 +36,8 @@ class TabBarPage extends StatelessWidget {
           onTap: (index) {
             _onItemTapped(
               context,
-              itemsState[index],
+              shellState,
+              index,
             );
           },
         ),
@@ -49,21 +47,13 @@ class TabBarPage extends StatelessWidget {
 
   void _onItemTapped(
     BuildContext context,
-    PBTabBarItemState itemState,
+    StatefulShellRouteState shellRouteState,
+    int index,
   ) {
-    // if (AppRouter.of(context).currentLocation == itemState.item.rootRoutePath) {
-    //   print("primary scroll");
-    //   PrimaryScrollController.of(context)?.animateTo(
-    //     0,
-    //     duration: const Duration(milliseconds: 300),
-    //     curve: Curves.linear,
-    //   );
-    // } else
-    if (PBAppNavigator.of(context).currentLocation ==
-        itemState.currentLocation) {
-      PBAppNavigator.of(context).goNamed(itemState.rootRouteLocation.name);
+    if (shellRouteState.currentIndex == index) {
+      shellRouteState.goToBranch(index, resetLocation: true);
     } else {
-      PBAppNavigator.of(context).goNamed(itemState.currentLocation.name);
+      shellRouteState.goToBranch(index);
     }
   }
 }

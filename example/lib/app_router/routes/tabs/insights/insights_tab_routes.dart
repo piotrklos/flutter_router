@@ -2,7 +2,7 @@ import '../../../../pages/home/insights/insights_page.dart';
 import '../../../interface/route.dart';
 
 class InsightsTabRoutes {
-  IRoute get baseRoute => _insightsRoute;
+  PBPageRoute get baseRoute => _insightsRoute;
 
   InsightsTabRoutes() {
     _init();

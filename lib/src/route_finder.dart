@@ -20,7 +20,7 @@ class RouteFinder {
   RouterPaths findForPath(
     String path, {
     Object? extra,
-    required bool shouldBackToParent,
+    required bool shouldBackToCaller,
     RouterPaths? parentStack,
     Completer? completer,
   }) {
@@ -32,7 +32,7 @@ class RouteFinder {
     return RouterPaths(
       allRoutes,
       parentStack: parentStack,
-      shouldBackToParent: shouldBackToParent,
+      shouldBackToCaller: shouldBackToCaller,
     );
   }
 
@@ -195,25 +195,25 @@ class RouteFinder {
 
 class RouterPaths extends Equatable {
   final List<FoundRoute> _routes;
-  final bool _shouldBackToParent;
+  final bool _shouldBackToCaller;
   final RouterPaths? _parentStack;
 
   const RouterPaths(
     this._routes, {
-    bool shouldBackToParent = false,
+    bool shouldBackToCaller = false,
     RouterPaths? parentStack,
   })  : _parentStack = parentStack,
-        _shouldBackToParent = shouldBackToParent;
+        _shouldBackToCaller = shouldBackToCaller;
 
   RouterPaths.empty()
       : _routes = [],
-        _shouldBackToParent = false,
+        _shouldBackToCaller = false,
         _parentStack = null;
 
   @visibleForTesting
   List<FoundRoute> get routes => _routes;
 
-  bool get shouldBackToParent => _shouldBackToParent;
+  bool get shouldBackToCaller => _shouldBackToCaller;
 
   RouterPaths? get parentRouterPaths => _parentStack;
 
@@ -270,6 +270,8 @@ class RouterPaths extends Equatable {
   void addNew(FoundRoute foundRoute) {
     _routes.add(foundRoute);
   }
+
+  List<FoundRoute> sublist(int index) => _routes.sublist(index);
 
   FoundRoute popLast() {
     if (_routes.isEmpty) {
@@ -332,11 +334,13 @@ class RouterPaths extends Equatable {
         _routes,
       ];
 
-  RouterPaths copy() {
+  RouterPaths copy({
+    bool? shouldBackToCaller,
+  }) {
     return RouterPaths(
       _routes.toList(),
       parentStack: _parentStack,
-      shouldBackToParent: _shouldBackToParent,
+      shouldBackToCaller: shouldBackToCaller ?? _shouldBackToCaller,
     );
   }
 }

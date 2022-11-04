@@ -2,10 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-import 'bloc_provider.dart';
+import '../app_router.dart';
+import 'inherited_statefull_navigation_shell.dart';
 import 'router_exception.dart';
-import 'stacked_navigation_shell.dart';
-import 'typedef.dart';
 
 abstract class BaseAppRoute extends Equatable {
   final List<BaseAppRoute> routes;
@@ -157,6 +156,7 @@ class ShellRoute extends ShellRouteBase {
     required ShellRouteBuilder builder,
     required List<BaseAppRoute> routes,
     GlobalKey<NavigatorState>? navigatorKey,
+    this.restorationScopeId,
     VoidCallback? onPop,
   })  : assert(routes.isNotEmpty, "Routes cannot be empty"),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
@@ -177,6 +177,7 @@ class ShellRoute extends ShellRouteBase {
   }
 
   final GlobalKey<NavigatorState> navigatorKey;
+  final String? restorationScopeId;
 
   @override
   GlobalKey<NavigatorState> navigatorKeyForChildRoute(BaseAppRoute route) {
@@ -190,59 +191,66 @@ class ShellRoute extends ShellRouteBase {
       ];
 }
 
-class MultiShellRoute extends ShellRouteBase {
-  final List<GlobalKey<NavigatorState>> navigatorKeys;
-  final List<StackedNavigationItem> _stackItems;
+class StatefulShellRoute extends ShellRouteBase {
+  final List<ShellRouteBranch> branches;
+  final bool preloadBranches;
 
-  MultiShellRoute._({
-    required this.navigatorKeys,
-    required List<StackedNavigationItem> stackItems,
+  StatefulShellRoute({
+    required List<ShellRouteBranch> branches,
     required ShellRouteBuilder builder,
-    required List<BaseAppRoute> routes,
-    required VoidCallback? onPop,
-  })  : assert(routes.isNotEmpty, "Routes cannot be empty"),
-        assert(
-          navigatorKeys.length == routes.length,
-          "Navigator keys length must be exactly the same as routes length",
-        ),
-        _stackItems = stackItems,
-        super._(
-          routes: routes,
+    bool preloadBranches = false,
+    VoidCallback? onPop,
+  }) : this._(
+          routes: _rootRoutes(branches),
+          branches: branches,
           builder: builder,
+          preloadBranches: preloadBranches,
+          onPop: onPop,
+        );
+
+  StatefulShellRoute.rootRoutes({
+    required List<AppPageRoute> routes,
+    required ShellRouteBuilder builder,
+    bool preloadBranches = false,
+    VoidCallback? onPop,
+  }) : this._(
+          routes: routes,
+          branches: routes.map((e) {
+            return ShellRouteBranch(
+              rootRoute: e,
+              navigatorKey: e.parentNavigatorKey,
+            );
+          }).toList(),
+          builder: builder,
+          preloadBranches: preloadBranches,
+          onPop: onPop,
+        );
+
+  StatefulShellRoute._({
+    required List<BaseAppRoute> routes,
+    required this.branches,
+    required ShellRouteBuilder builder,
+    required this.preloadBranches,
+    required VoidCallback? onPop,
+  })  : assert(branches.isNotEmpty),
+        assert(
+          _debugUniqueNavigatorKeys(branches).length == branches.length,
+          'Navigator keys must be unique',
+        ),
+        super._(
+          builder: builder,
+          routes: routes,
           onPop: onPop,
         ) {
     for (int i = 0; i < routes.length; ++i) {
-      final BaseAppRoute route = routes[i];
+      final route = routes[i];
       if (route is AppPageRoute) {
         assert(
           route.parentNavigatorKey == null ||
-              route.parentNavigatorKey == navigatorKeys[i],
-          "Parent route navigator key cannot be diffrent than Shell Route navigator key",
+              route.parentNavigatorKey == branches[i].navigatorKey,
         );
       }
     }
-  }
-
-  factory MultiShellRoute.stackedNavigationShell({
-    required List<BaseAppRoute> routes,
-    required List<StackedNavigationItem> stackItems,
-    StackedNavigationScaffoldBuilder? scaffoldBuilder,
-    VoidCallback? onPop,
-  }) {
-    return MultiShellRoute._(
-      routes: routes,
-      stackItems: stackItems,
-      navigatorKeys: stackItems.map((e) => e.navigatorKey).toList(),
-      onPop: onPop,
-      builder: (context, state, child) {
-        assert(child is Navigator);
-        return StackedNavigationShell(
-          currentNavigator: child as Navigator,
-          stackItems: stackItems,
-          scaffoldBuilder: scaffoldBuilder,
-        );
-      },
-    );
   }
 
   @override
@@ -254,22 +262,59 @@ class MultiShellRoute extends ShellRouteBase {
       );
     }
     final int routeIndex = routes.indexOf(baseRoute);
-    return navigatorKeys[routeIndex];
+    return branches[routeIndex].navigatorKey;
   }
 
-  @override
-  void onPop() {
-    for (final item in _stackItems) {
-      item.providers?.forEach((bloc) {
-        bloc.close();
-      });
-    }
-    super.onPop();
+  static StatefulShellRouteState of(BuildContext context) {
+    final inherited = context
+        .dependOnInheritedWidgetOfExactType<InheritedStatefulNavigationShell>();
+    assert(
+      inherited != null,
+      'No InheritedStatefulNavigationShell found in context',
+    );
+    return inherited!.routeState;
+  }
+
+  static Set<GlobalKey<NavigatorState>> _debugUniqueNavigatorKeys(
+    List<ShellRouteBranch> branches,
+  ) {
+    return Set<GlobalKey<NavigatorState>>.from(
+      branches.map(
+        (ShellRouteBranch e) => e.navigatorKey,
+      ),
+    );
+  }
+
+  static List<BaseAppRoute> _rootRoutes(
+    List<ShellRouteBranch> branches,
+  ) {
+    return branches.map((e) => e.rootRoute).toList();
   }
 
   @override
   List<Object?> get props => [
         ...super.props,
-        navigatorKeys,
+        branches,
       ];
+}
+
+class ShellRouteBranch {
+  ShellRouteBranch({
+    required this.rootRoute,
+    GlobalKey<NavigatorState>? navigatorKey,
+    this.defaultLocation,
+    this.restorationScopeId,
+    this.providersBuilder,
+  })  : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+        assert(
+          rootRoute is AppPageRoute || defaultLocation != null,
+          'Provide a defaultLocation or use a AppPageRoute as rootRoute',
+        );
+
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  final BaseAppRoute rootRoute;
+  final AppRouterLocation? defaultLocation;
+  final String? restorationScopeId;
+  final ValueGetter<List<AppRouterBlocProvider>>? providersBuilder;
 }

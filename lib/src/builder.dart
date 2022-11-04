@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,6 +9,7 @@ import 'page_state.dart';
 import 'configuration.dart';
 import 'route.dart';
 import 'route_finder.dart';
+import 'statefull_navigation_shell.dart';
 import 'typedef.dart';
 
 class AppRouterBuilder {
@@ -17,6 +19,7 @@ class AppRouterBuilder {
   final String? restorationScopeId;
   final List<NavigatorObserver> observers;
   final AppRouterBuilderHelper _helper;
+  final RouteFinder _routeFinder;
 
   PageBuilderForAppType? _pageBuilderForAppType;
 
@@ -26,9 +29,11 @@ class AppRouterBuilder {
     required AppRouterConfiguration configuration,
     required this.restorationScopeId,
     required this.observers,
+    required RouteFinder routeFinder,
   })  : _builderWithNavigator = builderWithNavigator,
         _errorBuilder = errorBuilder,
         _configuration = configuration,
+        _routeFinder = routeFinder,
         _helper = AppRouterBuilderHelper();
 
   Widget build({
@@ -124,10 +129,11 @@ class AppRouterBuilder {
     required List<Page> pages,
     Key? navigatorKey,
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    String? restorationScopeId,
   }) {
     return Navigator(
       key: navigatorKey,
-      restorationScopeId: restorationScopeId,
+      restorationScopeId: restorationScopeId ?? this.restorationScopeId,
       pages: pages,
       observers: observers,
       onPopPage: (route, result) {
@@ -280,17 +286,42 @@ class AppRouterBuilder {
         routerPaths: routerPaths,
       );
 
-      final navigatorChild = _buildNavigator(
-        onPop: onPop,
-        pages: keyToPages[shellNavigatorKey]!,
-        navigatorKey: shellNavigatorKey,
-      );
+      Widget child;
+      if (route is StatefulShellRoute) {
+        final String? restorationScopeId = route.branches
+            .firstWhereOrNull(
+              (e) => e.navigatorKey == shellNavigatorKey,
+            )
+            ?.restorationScopeId;
+        child = _buildNavigator(
+          onPop: onPop,
+          pages: keyToPages[shellNavigatorKey]!,
+          navigatorKey: shellNavigatorKey,
+          restorationScopeId: restorationScopeId,
+        );
+        child = _buildStatefulNavigationShell(
+          shellRoute: route,
+          shellRouterState: state,
+          navigator: child as Navigator,
+          onPop: onPop,
+          routerPaths: routerPaths,
+        );
+      } else {
+        final String? restorationScopeId =
+            (route is ShellRoute) ? route.restorationScopeId : null;
+        child = _buildNavigator(
+          onPop: onPop,
+          pages: keyToPages[shellNavigatorKey]!,
+          navigatorKey: shellNavigatorKey,
+          restorationScopeId: restorationScopeId,
+        );
+      }
 
       final routePage = _buildPageForRoute(
         context: context,
         state: state,
         foundRoute: foundRoute,
-        childWidget: navigatorChild,
+        childWidget: child,
         parentsCubitProviders: parentsCubitProviders,
       );
 
@@ -361,7 +392,18 @@ class AppRouterBuilder {
           'Attempt to build ShellRoute without a child widget',
         );
       }
-      buildedChild = route.builder(context, state, childWidget);
+      if (route is StatefulShellRoute) {
+        buildedChild = childWidget;
+      } else if (route is ShellRoute) {
+        final ShellRouteBuilder? builder = route.builder;
+        if (builder == null) {
+          throw _AppRouterRouteBuilderError(
+            'No builder provided to ShellRoute: $route',
+          );
+        }
+
+        buildedChild = builder(context, state, childWidget);
+      }
     }
     if (buildedChild != null) {
       if (parentsCubitProviders.isNotEmpty) {
@@ -374,6 +416,71 @@ class AppRouterBuilder {
     }
 
     throw _AppRouterRouteBuilderError('Unsupported route type $route');
+  }
+
+  StatefulNavigationShell _buildStatefulNavigationShell({
+    required StatefulShellRoute shellRoute,
+    required Navigator navigator,
+    required AppRouterPageState shellRouterState,
+    required RouterPaths routerPaths,
+    required ValueSetter<dynamic> onPop,
+  }) {
+    return StatefulNavigationShell(
+      configuration: _configuration,
+      shellRoute: shellRoute,
+      shellAppRouterState: shellRouterState,
+      navigator: navigator,
+      routerPaths: routerPaths,
+      branchNavigatorBuilder: (
+        BuildContext context,
+        StatefulShellRouteState routeState,
+        int branchIndex,
+      ) =>
+          _buildPreloadedNavigatorForRouteBranch(
+        context: context,
+        routeState: routeState,
+        branchIndex: branchIndex,
+        onPop: onPop,
+      ),
+    );
+  }
+
+  Navigator? _buildPreloadedNavigatorForRouteBranch({
+    required BuildContext context,
+    required StatefulShellRouteState routeState,
+    required int branchIndex,
+    required ValueSetter<dynamic> onPop,
+  }) {
+    final branchState = routeState.branchStates[branchIndex];
+    final ShellRouteBranch branch = branchState.routeBranch;
+    final defaultLocation = branchState.defaultLocation;
+
+    RouterPaths routerPaths = _routeFinder.findForPath(
+      defaultLocation.path,
+      shouldBackToCaller: false,
+    );
+    final int routeBranchIndex = routerPaths.allRoutes.indexWhere(
+      (e) => e == branch.rootRoute,
+    );
+
+    if (routeBranchIndex >= 0) {
+      routerPaths = RouterPaths(routerPaths.sublist(routeBranchIndex));
+
+      final List<Page<dynamic>> pages = _buildPagesList(
+        context: context,
+        routerPaths: routerPaths,
+        onPop: onPop,
+        navigatorKey: branch.navigatorKey,
+      );
+
+      return _buildNavigator(
+        onPop: onPop,
+        pages: pages,
+        navigatorKey: branch.navigatorKey,
+        restorationScopeId: branch.restorationScopeId,
+      );
+    }
+    return null;
   }
 }
 

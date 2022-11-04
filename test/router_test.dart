@@ -1206,11 +1206,11 @@ void main() {
       key.currentContext!.go(
         location,
         extra: extra,
-        backToParent: true,
+        backToCaller: true,
       );
       expect(router.routerLocation, location);
       expect(router.extra, extra);
-      expect(router.backToParent, true);
+      expect(router.backToCaller, true);
     });
 
     testWidgets("Call goNamed on closest AppRouter", (
@@ -1230,11 +1230,11 @@ void main() {
       key.currentContext!.goNamed(
         name,
         extra: extra,
-        backToParent: true,
+        backToCaller: true,
       );
       expect(router.routerName, name);
       expect(router.extra, extra);
-      expect(router.backToParent, true);
+      expect(router.backToCaller, true);
     });
 
     testWidgets("call push on closest AppPageRouter",
@@ -1439,27 +1439,16 @@ void main() {
     });
 
     testWidgets(
-        "Navigates to correct nested navigation tree in MultiShellRoute and maintains state",
+        "Navigates to correct nested navigation tree in StatefulShellRoute and maintains state",
         (WidgetTester tester) async {
       final rootNavigatorKey = GlobalKey<NavigatorState>();
       final sectionANavigatorKey = GlobalKey<NavigatorState>();
       final sectionBNavigatorKey = GlobalKey<NavigatorState>();
       final statefulWidgetKey = GlobalKey<TestStatefullWidgetState>();
 
-      final stackItems = [
-        StackedNavigationItem(
-          rootRouteLocation: const AppRouterLocation(path: "/a", name: "a"),
-          navigatorKey: sectionANavigatorKey,
-        ),
-        StackedNavigationItem(
-          rootRouteLocation: const AppRouterLocation(path: "/b", name: "b"),
-          navigatorKey: sectionBNavigatorKey,
-        ),
-      ];
-
       final routes = [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: stackItems,
+        StatefulShellRoute.rootRoutes(
+          builder: (_, __, Widget child) => child,
           routes: [
             AppPageRoute(
               parentNavigatorKey: sectionANavigatorKey,
@@ -1469,7 +1458,7 @@ void main() {
               routes: [
                 AppPageRoute(
                   path: "detailA",
-                  name: "detailsA",
+                  name: "detailA",
                   builder: (_, __) => Column(children: <Widget>[
                     const Text("Screen A Detail"),
                     TestStatefullWidget(key: statefulWidgetKey),
@@ -1480,7 +1469,7 @@ void main() {
             AppPageRoute(
               parentNavigatorKey: sectionBNavigatorKey,
               path: "/b",
-              name: "name",
+              name: "b",
               builder: (_, __) => const Text("Screen B"),
             ),
           ],
@@ -1519,7 +1508,7 @@ void main() {
     });
 
     testWidgets(
-        "Pops from the correct Navigator in a MultiShellRoute when the Android back button is pressed",
+        "Pops from the correct Navigator in a StatefulShellRoute when the Android back button is pressed",
         (
       WidgetTester tester,
     ) async {
@@ -1527,20 +1516,9 @@ void main() {
       final sectionANavigatorKey = GlobalKey<NavigatorState>();
       final sectionBNavigatorKey = GlobalKey<NavigatorState>();
 
-      final stackItems = [
-        StackedNavigationItem(
-          rootRouteLocation: const AppRouterLocation(path: "/a", name: "a"),
-          navigatorKey: sectionANavigatorKey,
-        ),
-        StackedNavigationItem(
-          rootRouteLocation: const AppRouterLocation(path: "/b", name: "b"),
-          navigatorKey: sectionBNavigatorKey,
-        ),
-      ];
-
       final routes = [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: stackItems,
+        StatefulShellRoute.rootRoutes(
+          builder: (_, __, Widget child) => child,
           routes: [
             AppPageRoute(
               parentNavigatorKey: sectionANavigatorKey,
@@ -1853,6 +1831,83 @@ void main() {
           expect(find.text("Shell"), findsNothing);
         },
       );
+
+      testWidgets(
+        "Should pop to callerPage for the first time, then should pop to parent",
+        (WidgetTester tester) async {
+          final routes = [
+            StatefulShellRoute(
+              branches: [
+                ShellRouteBranch(
+                  rootRoute: AppPageRoute(
+                    path: "/a",
+                    name: "a",
+                    builder: (ctx, __) {
+                      return Column(
+                        children: [
+                          const Text("A Screen"),
+                          Builder(builder: (newCtx) {
+                            return TextButton(
+                              onPressed: () {
+                                StatefulShellRoute.of(newCtx).goToBranch(1);
+                              },
+                              child: const Text("Change tab"),
+                            );
+                          })
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                ShellRouteBranch(
+                  rootRoute: AppPageRoute(
+                    path: "/b",
+                    name: "b",
+                    builder: (_, __) => const Text("B Screen"),
+                    routes: [
+                      AppPageRoute(
+                        path: "child",
+                        name: "childB",
+                        builder: (_, __) => const Text("A child Screen"),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              builder: (_, __, child) => child,
+            ),
+          ];
+          final router = await _createRouter(
+            routes,
+            tester,
+            initialLocation: "/a",
+          );
+
+          router.go("/b/child", backToCaller: true);
+          await tester.pumpAndSettle();
+          expect(find.text("B Screen"), findsNothing);
+          expect(find.text("A Screen"), findsNothing);
+          expect(find.text("A child Screen"), findsOneWidget);
+
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(find.text("B Screen"), findsNothing);
+          expect(find.text("A Screen"), findsOneWidget);
+          expect(find.text("A child Screen"), findsNothing);
+
+          await tester.tap(find.text("Change tab"));
+          await tester.pumpAndSettle();
+          expect(find.text("B Screen"), findsNothing);
+          expect(find.text("A Screen"), findsNothing);
+          expect(find.text("A child Screen"), findsOneWidget);
+
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(find.text("B Screen"), findsOneWidget);
+          expect(find.text("A Screen"), findsNothing);
+          expect(find.text("A child Screen"), findsNothing);
+        },
+      );
     });
   });
 
@@ -1902,28 +1957,25 @@ void main() {
       expect(find.text("State: New state"), findsOneWidget);
     });
 
-    testWidgets("Should read bloc form context in builder with MultiShellRoute",
+    testWidgets(
+        "Should read bloc form context in builder with StatefulShellRoute",
         (tester) async {
       final routes = [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation:
-                  const AppRouterLocation(name: "start", path: "/"),
-              providers: [SampleCubit()],
-            ),
-          ],
-          routes: [
-            AppPageRoute(
-              path: "/",
-              name: "start",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit, SampleCubitState>(
-                    builder: (_, __) {
-                  return const Scaffold(body: Text("Start"));
-                });
-              },
+        StatefulShellRoute(
+          builder: (_, __, Widget child) => child,
+          branches: [
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
+                path: "/",
+                name: "start",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit, SampleCubitState>(
+                      builder: (_, __) {
+                    return const Scaffold(body: Text("Start"));
+                  });
+                },
+              ),
+              providersBuilder: () => [SampleCubit()],
             ),
           ],
         ),
@@ -1935,29 +1987,25 @@ void main() {
       expect(find.text("Start"), findsOneWidget);
     });
 
-    testWidgets("Should update bloc state with MultiShellRoute",
+    testWidgets("Should update bloc state with StatefulShellRoute",
         (tester) async {
       final sampleCubit = SampleCubit();
       final routes = [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation:
-                  const AppRouterLocation(name: "start", path: "/"),
-              providers: [sampleCubit],
-            ),
-          ],
-          routes: [
-            AppPageRoute(
-              path: "/",
-              name: "start",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit, SampleCubitState>(
-                    builder: (_, state) {
-                  return Scaffold(body: Text("State: ${state.message}"));
-                });
-              },
+        StatefulShellRoute(
+          builder: (_, __, Widget child) => child,
+          branches: [
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
+                path: "/",
+                name: "start",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit, SampleCubitState>(
+                      builder: (_, state) {
+                    return Scaffold(body: Text("State: ${state.message}"));
+                  });
+                },
+              ),
+              providersBuilder: () => [sampleCubit],
             ),
           ],
         ),
@@ -2072,7 +2120,7 @@ void main() {
       verify(() => mockCubit.close()).called(1);
     });
 
-    testWidgets("Should close only sub-route cubit with MultiShellRoute",
+    testWidgets("Should close only sub-route cubit with StatefulShellRoute",
         (tester) async {
       var sampleCubitClosed = false;
       var sampleCubitClosed2 = false;
@@ -2088,58 +2136,47 @@ void main() {
       );
 
       final routes = [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation: const AppRouterLocation(
-                name: "start",
+        StatefulShellRoute(
+          builder: (_, __, Widget child) => child,
+          branches: [
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
                 path: "/",
+                name: "start",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit, SampleCubitState>(
+                      builder: (_, __) {
+                    return const Scaffold(body: Text("Start"));
+                  });
+                },
               ),
-              providers: [sampleCubit],
+              providersBuilder: () => [sampleCubit],
             ),
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation: const AppRouterLocation(
-                name: "a",
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
                 path: "/a",
+                name: "a",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit2, SampleCubitState>(
+                      builder: (_, __) {
+                    return const Scaffold(body: Text("A Page"));
+                  });
+                },
+                routes: [
+                  AppPageRoute(
+                    path: "child",
+                    name: "aChild",
+                    builder: (ctx, __) {
+                      return BlocBuilder<SampleCubit3, SampleCubitState>(
+                          builder: (_, __) {
+                        return const Scaffold(body: Text("Start"));
+                      });
+                    },
+                    providersBuilder: (_) => [sampleCubit3],
+                  ),
+                ],
               ),
-              providers: [sampleCubit2],
-            ),
-          ],
-          routes: [
-            AppPageRoute(
-              path: "/",
-              name: "start",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit, SampleCubitState>(
-                    builder: (_, __) {
-                  return const Scaffold(body: Text("Start"));
-                });
-              },
-            ),
-            AppPageRoute(
-              path: "/a",
-              name: "a",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit2, SampleCubitState>(
-                    builder: (_, __) {
-                  return const Scaffold(body: Text("A Page"));
-                });
-              },
-              routes: [
-                AppPageRoute(
-                  path: "child",
-                  name: "aChild",
-                  builder: (ctx, __) {
-                    return BlocBuilder<SampleCubit3, SampleCubitState>(
-                        builder: (_, __) {
-                      return const Scaffold(body: Text("Start"));
-                    });
-                  },
-                  providersBuilder: (_) => [sampleCubit3],
-                ),
-              ],
+              providersBuilder: () => [sampleCubit2],
             ),
           ],
         ),
@@ -2162,7 +2199,7 @@ void main() {
     });
 
     testWidgets(
-        "Should close all cubits when go to another root route of MultiShellRoute",
+        "Should close all cubits when go to another root route of StatefulShellRoute",
         (tester) async {
       var sampleCubitClosed = false;
       var sampleCubitClosed2 = false;
@@ -2179,58 +2216,47 @@ void main() {
 
       final routes = [
         AppPageRoute(path: "/test", name: "test", builder: testScreen),
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation: const AppRouterLocation(
-                name: "start",
+        StatefulShellRoute(
+          builder: (_, __, Widget child) => child,
+          branches: [
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
                 path: "/",
+                name: "start",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit, SampleCubitState>(
+                      builder: (_, __) {
+                    return const Scaffold(body: Text("Start"));
+                  });
+                },
               ),
-              providers: [sampleCubit],
+              providersBuilder: () => [sampleCubit],
             ),
-            StackedNavigationItem(
-              navigatorKey: GlobalKey<NavigatorState>(),
-              rootRouteLocation: const AppRouterLocation(
-                name: "a",
+            ShellRouteBranch(
+              rootRoute: AppPageRoute(
                 path: "/a",
+                name: "a",
+                builder: (ctx, __) {
+                  return BlocBuilder<SampleCubit2, SampleCubitState>(
+                      builder: (_, __) {
+                    return const Scaffold(body: Text("A Page"));
+                  });
+                },
+                routes: [
+                  AppPageRoute(
+                    path: "child",
+                    name: "aChild",
+                    builder: (ctx, __) {
+                      return BlocBuilder<SampleCubit3, SampleCubitState>(
+                          builder: (_, __) {
+                        return const Scaffold(body: Text("Start"));
+                      });
+                    },
+                    providersBuilder: (_) => [sampleCubit3],
+                  ),
+                ],
               ),
-              providers: [sampleCubit2],
-            ),
-          ],
-          routes: [
-            AppPageRoute(
-              path: "/",
-              name: "start",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit, SampleCubitState>(
-                    builder: (_, __) {
-                  return const Scaffold(body: Text("Start"));
-                });
-              },
-            ),
-            AppPageRoute(
-              path: "/a",
-              name: "a",
-              builder: (ctx, __) {
-                return BlocBuilder<SampleCubit2, SampleCubitState>(
-                    builder: (_, __) {
-                  return const Scaffold(body: Text("A Page"));
-                });
-              },
-              routes: [
-                AppPageRoute(
-                  path: "child",
-                  name: "aChild",
-                  builder: (ctx, __) {
-                    return BlocBuilder<SampleCubit3, SampleCubitState>(
-                        builder: (_, __) {
-                      return const Scaffold(body: Text("Start"));
-                    });
-                  },
-                  providersBuilder: (_) => [sampleCubit3],
-                ),
-              ],
+              providersBuilder: () => [sampleCubit2],
             ),
           ],
         ),

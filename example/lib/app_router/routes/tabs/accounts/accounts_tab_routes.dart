@@ -7,7 +7,7 @@ import '../../../../pages/home/accounts/relationship/relationship_page.dart';
 import '../../../../service/user_service.dart';
 
 class AccountsTabRoutes {
-  IRoute get baseRoute => _relationshipRoute;
+  PBPageRoute get baseRoute => _relationshipRoute;
 
   AccountsTabRoutes() {
     _init();

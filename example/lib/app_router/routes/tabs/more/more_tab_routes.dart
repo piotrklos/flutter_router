@@ -10,7 +10,7 @@ import '../../../../pages/home/more/settings/settings_page.dart';
 import '../../../interface/route.dart';
 
 class MoreTabRoutes {
-  IRoute get baseRoute => _moreRoute;
+  PBPageRoute get baseRoute => _moreRoute;
 
   MoreTabRoutes() {
     _init();

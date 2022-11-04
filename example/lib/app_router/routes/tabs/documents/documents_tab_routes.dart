@@ -2,7 +2,7 @@ import '../../../../pages/home/documents/documents_page.dart';
 import '../../../interface/route.dart';
 
 class DocumentsTabRoutes {
-  IRoute get baseRoute => _documentsRoute;
+  PBPageRoute get baseRoute => _documentsRoute;
 
   DocumentsTabRoutes() {
     _init();

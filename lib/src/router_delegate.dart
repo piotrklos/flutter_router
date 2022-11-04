@@ -25,6 +25,7 @@ class AppRouterDelegate extends RouterDelegate<RouterPaths>
     required AppRouterBuilderWithNavigator builderWithNavigator,
     required AppRouterWidgetBuilder errorBuilder,
     required List<NavigatorObserver> observers,
+    required RouteFinder routerFinder,
     String? restorationScopeId,
   })  : _configuration = configuration,
         _appRouterBuilder = AppRouterBuilder(
@@ -33,6 +34,7 @@ class AppRouterDelegate extends RouterDelegate<RouterPaths>
           errorBuilder: errorBuilder,
           observers: observers,
           restorationScopeId: restorationScopeId,
+          routeFinder: routerFinder,
         );
 
   @override
@@ -127,9 +129,11 @@ class AppRouterDelegate extends RouterDelegate<RouterPaths>
   }
 
   void pop<T extends Object?>([T? result]) {
-    if (_routerPaths.shouldBackToParent &&
+    if (_routerPaths.shouldBackToCaller &&
         _routerPaths.parentRouterPaths != null) {
-      _routerPaths.last.completer.complete(result);
+      if (!_routerPaths.last.completer.isCompleted) {
+        _routerPaths.last.completer.complete(result);
+      }
       setNewRoutePath(_routerPaths.parentRouterPaths!);
     } else {
       final removed = _routerPaths.popLast();
@@ -161,6 +165,11 @@ class AppRouterDelegate extends RouterDelegate<RouterPaths>
   void replace(FoundRoute foundRoute) {
     assert(_routerPaths.isNotEmpty);
     _routerPaths.replaceLast(foundRoute);
+    notifyListeners();
+  }
+
+  void replaceRouterPaths(RouterPaths routerPaths) {
+    _routerPaths = routerPaths.copy(shouldBackToCaller: false);
     notifyListeners();
   }
 }

@@ -1,10 +1,8 @@
 import 'package:app_router/app_router.dart' as router;
-import 'package:flutter/material.dart';
 
 import '../../pages/home/tab_bar_page.dart';
 import '../interface/app_router_bloc_provider.dart';
 import '../interface/route.dart';
-import '../interface/tab_bar_item_state.dart';
 import 'mapper.dart';
 
 extension IRouteExtension on IRoute {
@@ -74,34 +72,19 @@ extension PBTabRouteExtension on PBTabRoute {
   router.BaseAppRoute mapToBaseAppRoute({
     required bool withProviderBuilder,
   }) {
-    return router.MultiShellRoute.stackedNavigationShell(
-      routes: items
+    return router.StatefulShellRoute(
+      preloadBranches: false,
+      branches: items
           .map(
-            (e) => e.baseRoute.mapToBaseAppRoute(
+            (e) => e._mapToBranche(
               withProviderBuilder: withProviderBuilder,
             ),
           )
           .toList(),
-      stackItems: items
-          .map(
-            (e) => e._stackedNavigationItem(
-              providers: e.blocsGetter,
-              withProviderBuilder: withProviderBuilder,
-            ),
-          )
-          .toList(),
-      scaffoldBuilder: (context, currentIndex, itemsState, child) {
+      builder: (_, __, child) {
         return TabBarPage(
-          currentIndex: currentIndex,
-          itemsState: itemsState.map((e) {
-            return PBTabBarItemState(
-              currentLocation: e.currentLocation.mapToPBRouteLocation(),
-              rootRouteLocation:
-                  e.item.rootRouteLocation.mapToPBRouteLocation(),
-            );
-          }).toList(),
-          body: child,
-          tabRouteItems: items,
+          child: child,
+          items: items,
         );
       },
       onPop: () {
@@ -112,22 +95,25 @@ extension PBTabRouteExtension on PBTabRoute {
 }
 
 extension PBTabRouteItemExtension on PBTabRouteItem {
-  router.StackedNavigationItem _stackedNavigationItem({
-    required ValueGetter<List<PBAppRouterBlocProvider>>? providers,
+  router.ShellRouteBranch _mapToBranche({
     required bool withProviderBuilder,
   }) {
-    return router.StackedNavigationItem(
-      rootRouteLocation: router.AppRouterLocation(
-        path: baseRoute.fullpath,
-        name: baseRoute.name,
-      ),
+    return router.ShellRouteBranch(
       navigatorKey: navigatorKey,
-      providers: () {
+      restorationScopeId: restorationScopeId,
+      defaultLocation: router.AppRouterLocation(
+        name: baseRoute.name,
+        path: baseRoute.fullpath,
+      ),
+      rootRoute: baseRoute.mapToBaseAppRoute(
+        withProviderBuilder: withProviderBuilder,
+      ),
+      providersBuilder: () {
         if (withProviderBuilder) {
-          return providers?.call() ?? [];
+          return blocsGetter?.call() ?? [];
         }
         return <router.AppRouterBlocProvider>[];
-      }(),
+      },
     );
   }
 }

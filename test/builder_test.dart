@@ -89,20 +89,12 @@ void main() {
       initialLocation: "/nested",
       errorBuilder: (_, __) => const ErrorScreen(message: ""),
       routes: [
-        MultiShellRoute.stackedNavigationShell(
-          stackItems: [
-            StackedNavigationItem(
-              navigatorKey: key,
-              rootRouteLocation: const AppRouterLocation(
-                name: "nested",
-                path: "/nested",
-              ),
-            ),
-          ],
+        StatefulShellRoute.rootRoutes(
+          builder: (_, __, Widget child) => child,
           routes: [
             AppPageRoute(
               parentNavigatorKey: key,
-              path: "/nested",
+              path: '/nested',
               name: "nested",
               builder: (_, __) {
                 return _DetailsScreen();
@@ -268,6 +260,106 @@ void main() {
     expect(find.byType(_HomeScreen), findsNothing);
     expect(find.byType(_DetailsScreen), findsOneWidget);
   });
+
+  testWidgets("Uses the correct restorationScopeId for ShellRoute",
+      (WidgetTester tester) async {
+    final rootNavigatorKey = GlobalKey<NavigatorState>();
+    final shellNavigatorKey = GlobalKey<NavigatorState>();
+
+    final config = AppRouterConfiguration(
+      globalNavigatorKey: rootNavigatorKey,
+      topLevelRoutes: [
+        ShellRoute(
+          builder: (_, __, Widget child) {
+            return _HomeScreen(child: child);
+          },
+          navigatorKey: shellNavigatorKey,
+          restorationScopeId: "scope1",
+          routes: [
+            AppPageRoute(
+              path: "/a",
+              name: "a",
+              builder: (_, __) {
+                return _DetailsScreen();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final routerPaths = RouterPaths([
+      FoundRoute.test(
+        fullPath: "",
+        route: config.topLevelRoutes.first,
+      ),
+      FoundRoute.test(
+        fullPath: "/a",
+        route: config.topLevelRoutes.first.routes.first,
+      ),
+    ]);
+
+    await tester.pumpWidget(
+      _BuilderTestWidget(
+        routeConfiguration: config,
+        routerPaths: routerPaths,
+      ),
+    );
+
+    expect(find.byKey(rootNavigatorKey), findsOneWidget);
+    expect(find.byKey(shellNavigatorKey), findsOneWidget);
+    expect(
+      (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
+      "scope1",
+    );
+  });
+
+  testWidgets("Uses the correct restorationScopeId for StatefulShellRoute",
+      (WidgetTester tester) async {
+    final rootNavigatorKey = GlobalKey<NavigatorState>();
+    final shellNavigatorKey = GlobalKey<NavigatorState>();
+
+    final router = AppRouter(
+      initialLocation: "/a",
+      navigatorKey: rootNavigatorKey,
+      errorBuilder: (_, __) => const ErrorScreen(message: ""),
+      routes: [
+        StatefulShellRoute(
+          builder: (_, __, Widget child) {
+            return _HomeScreen(child: child);
+          },
+          branches: [
+            ShellRouteBranch(
+              navigatorKey: shellNavigatorKey,
+              restorationScopeId: "scope1",
+              rootRoute: AppPageRoute(
+                path: "/a",
+                name: "a",
+                builder: (_, __) {
+                  return _DetailsScreen();
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MaterialApp.router(
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      backButtonDispatcher: router.backButtonDispatcher,
+      routeInformationProvider: router.routeInformationProvider,
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(rootNavigatorKey), findsOneWidget);
+    expect(find.byKey(shellNavigatorKey), findsOneWidget);
+    expect(
+      (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
+      "scope1",
+    );
+  });
 }
 
 class _HomeScreen extends StatelessWidget {
@@ -321,6 +413,7 @@ class _BuilderTestWidget extends StatelessWidget {
       },
       restorationScopeId: null,
       observers: <NavigatorObserver>[],
+      routeFinder: RouteFinder(configuration),
     );
   }
 

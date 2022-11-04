@@ -56,7 +56,7 @@ class AccountsPage extends StatelessWidget {
                 PBAppNavigator.of(context)
                     .goNamed(
                   HelperPage.name,
-                  backToParent: true,
+                  backToCaller: true,
                   extra: "Hello from accounts",
                 )
                     .then((value) {

@@ -91,12 +91,13 @@ class PBPageRoute extends IRoute {
 }
 
 class PBTabRouteItem extends Equatable {
-  final IRoute baseRoute;
+  final PBPageRoute baseRoute;
   final String name;
   final IconData iconData;
   final GlobalKey<NavigatorState> navigatorKey;
   final ValueGetter<List<PBAppRouterBlocProvider>>? blocsGetter;
   final VoidCallback? onDispose;
+  final String? restorationScopeId;
 
   const PBTabRouteItem({
     required this.baseRoute,
@@ -105,6 +106,7 @@ class PBTabRouteItem extends Equatable {
     required this.navigatorKey,
     this.blocsGetter,
     this.onDispose,
+    this.restorationScopeId
   });
 
   @override
@@ -114,5 +116,6 @@ class PBTabRouteItem extends Equatable {
         iconData,
         navigatorKey,
         blocsGetter,
+        restorationScopeId,
       ];
 }

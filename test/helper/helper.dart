@@ -1,4 +1,4 @@
-import 'package:app_router/src/app_router.dart';
+import 'package:app_router/src/router.dart';
 import 'package:app_router/src/route.dart';
 import 'package:app_router/src/route_finder.dart';
 import 'package:app_router/src/utils.dart';
@@ -31,18 +31,18 @@ class AppRouterSpy extends AppRouter {
   String? routerLocation;
   String? routerName;
   Object? extra;
-  bool? backToParent;
+  bool? backToCaller;
   bool? popped;
 
   @override
   Future<T?> go<T extends Object?>(
     String location, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     routerLocation = location;
     this.extra = extra;
-    this.backToParent = backToParent;
+    this.backToCaller = backToCaller;
     return SynchronousFuture(null);
   }
 
@@ -50,11 +50,11 @@ class AppRouterSpy extends AppRouter {
   Future<T?> goNamed<T extends Object?>(
     String name, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     routerName = name;
     this.extra = extra;
-    this.backToParent = backToParent;
+    this.backToCaller = backToCaller;
     return SynchronousFuture(null);
   }
 

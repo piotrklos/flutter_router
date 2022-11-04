@@ -4,7 +4,6 @@ import 'bloc_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'page_state.dart';
-import 'stacked_navigation_shell.dart';
 
 typedef AppRouterWidgetBuilder = Widget Function(
   BuildContext context,
@@ -23,11 +22,10 @@ typedef AppRouterBuilderWithNavigator = Widget Function(
   Widget navigator,
 );
 
-typedef StackedNavigationScaffoldBuilder = Widget Function(
+typedef ShellRouteBranchNavigatorBuilder = Navigator? Function(
   BuildContext context,
-  int currentIndex,
-  List<StackedNavigationItemState> itemsState,
-  Widget child,
+  StatefulShellRouteState routeState,
+  int branchIndex,
 );
 
 typedef AppRouteProvidersBuilder = T?

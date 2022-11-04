@@ -1,17 +1,27 @@
 import 'dart:async';
 
+import 'package:equatable/equatable.dart';
+
 import 'route_finder.dart';
 
-class RouterInformationStateObject<T extends Object?> {
+class RouterInformationStateObject<T extends Object?> extends Equatable {
   final Object? extra;
-  final bool backToParent;
+  final bool backToCaller;
   final RouterPaths? parentStack;
   final Completer<T> completer;
 
-  RouterInformationStateObject({
+  const RouterInformationStateObject({
     required this.extra,
-    required this.backToParent,
+    required this.backToCaller,
     required this.parentStack,
     required this.completer,
   });
+
+  @override
+  List<Object?> get props => [
+        extra,
+        backToCaller,
+        parentStack,
+        completer,
+      ];
 }

@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 
-import 'app_router.dart';
+import 'router.dart';
 
 extension AppRouterExtension on BuildContext {
   Future<T?> go<T extends Object?>(
     String location, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     return AppRouter.of(this).go(
       location,
       extra: extra,
-      backToParent: backToParent,
+      backToCaller: backToCaller,
     );
   }
 
   Future<T?> goNamed<T extends Object?>(
     String name, {
     Object? extra,
-    bool backToParent = false,
+    bool backToCaller = false,
   }) {
     return AppRouter.of(this).goNamed(
       name,
       extra: extra,
-      backToParent: backToParent,
+      backToCaller: backToCaller,
     );
   }
 

@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:app_router/src/bloc_provider.dart';
-import 'package:app_router/src/location.dart';
 import 'package:app_router/src/route.dart';
-import 'package:app_router/src/stacked_navigation_shell.dart';
 import 'package:app_router/src/typedef.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,54 +57,38 @@ class SampleRoutes {
     _controller = null;
   }
 
-  static final shellRoute = MultiShellRoute.stackedNavigationShell(
-    routes: [
-      routePage1,
-      routePage2,
-      routePage3,
-    ],
-    onPop: () {
-      _controller?.add("shellRoute onPop");
-    },
-    stackItems: [
-      StackedNavigationItem(
-        navigatorKey: GlobalKey<NavigatorState>(),
-        rootRouteLocation: AppRouterLocation(
-          name: routePage1.name,
-          path: routePage1.path,
-        ),
-        providers: [
+  static final shellRoute = StatefulShellRoute(
+    builder: (_, __, child) => child,
+    branches: [
+      ShellRouteBranch(
+        rootRoute: routePage1,
+        providersBuilder: () => [
           TestTab1Cubit(),
           TestTab12Cubit(),
           TestTabCubit(),
         ],
       ),
-      StackedNavigationItem(
-        navigatorKey: GlobalKey<NavigatorState>(),
-        rootRouteLocation: AppRouterLocation(
-          name: routePage2.name,
-          path: routePage2.path,
-        ),
-        providers: [
+      ShellRouteBranch(
+        rootRoute: routePage2,
+        providersBuilder: () => [
           TestTab2Cubit(),
           TestTab12Cubit(),
           TestTab23Cubit(),
           TestTabCubit(),
         ],
       ),
-      StackedNavigationItem(
-        navigatorKey: GlobalKey<NavigatorState>(),
-        rootRouteLocation: AppRouterLocation(
-          name: routePage3.name,
-          path: routePage3.path,
-        ),
-        providers: [
+      ShellRouteBranch(
+        rootRoute: routePage3,
+        providersBuilder: () => [
           TestTab3Cubit(),
           TestTab23Cubit(),
           TestTabCubit(),
         ],
       ),
     ],
+    onPop: () {
+      _controller?.add("shellRoute onPop");
+    },
   );
 
   static final routePage1 = _MockAppPageRoute(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 typedef PageBuilderForAppType = Page<void> Function({
   required LocalKey key,
-  required String? name,
+  required String name,
   required String restorationId,
   required Widget child,
 });
@@ -20,7 +20,7 @@ class AppRouterBuilderHelper {
   @visibleForTesting
   CupertinoPage<void> pageBuilderForCupertinoApp({
     required LocalKey key,
-    required String? name,
+    required String name,
     required String restorationId,
     required Widget child,
   }) {
@@ -35,7 +35,7 @@ class AppRouterBuilderHelper {
   @visibleForTesting
   MaterialPage<void> pageBuilderForMaterialApp({
     required LocalKey key,
-    required String? name,
+    required String name,
     required String restorationId,
     required Widget child,
   }) {

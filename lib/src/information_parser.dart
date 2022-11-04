@@ -42,7 +42,7 @@ class AppRouteInformationParser extends RouteInformationParser<RouterPaths> {
       routerPaths = routeFinder.findForPath(
         routeInformation.location!,
         extra: stateObject != null ? stateObject.extra : routeInformation.state,
-        shouldBackToParent: stateObject?.backToParent ?? false,
+        shouldBackToCaller: stateObject?.backToCaller ?? false,
         parentStack: stateObject?.parentStack,
         completer: stateObject?.completer,
       );

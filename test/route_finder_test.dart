@@ -101,7 +101,7 @@ void main() {
       expect(routerPaths.allRoutes, []);
       expect(routerPaths.isEmpty, true);
       expect(routerPaths.isNotEmpty, false);
-      expect(routerPaths.shouldBackToParent, false);
+      expect(routerPaths.shouldBackToCaller, false);
       expect(routerPaths.parentRouterPaths, null);
       expect(routerPaths.containsAnyCubitProviders, false);
       expect(
@@ -124,7 +124,7 @@ void main() {
       ]);
       expect(routerPaths.isEmpty, false);
       expect(routerPaths.isNotEmpty, true);
-      expect(routerPaths.shouldBackToParent, false);
+      expect(routerPaths.shouldBackToCaller, false);
       expect(routerPaths.parentRouterPaths, null);
       expect(
         routerPaths.location,
@@ -261,7 +261,7 @@ void main() {
         final routerPaths = RouterPaths(foundsRoutes);
 
         expect(
-          routerPaths.firstAppRouteOfType<MultiShellRoute>(),
+          routerPaths.firstAppRouteOfType<StatefulShellRoute>(),
           SampleRoutes.shellRoute,
         );
         expect(
@@ -691,7 +691,7 @@ void main() {
 
         expect(
           () {
-            routeFinder.findForPath("/b", shouldBackToParent: false);
+            routeFinder.findForPath("/b", shouldBackToCaller: false);
           },
           throwsA(
             predicate(
@@ -707,7 +707,7 @@ void main() {
         final routeFinder = _createRouteFinder(
           routes: [startRoute],
         );
-        final result = routeFinder.findForPath("/", shouldBackToParent: false);
+        final result = routeFinder.findForPath("/", shouldBackToCaller: false);
         expect(result, TestHelper.createRouterPaths([startRoute]));
       });
 
@@ -715,7 +715,7 @@ void main() {
         final routeFinder = _createRouteFinder(
           routes: [startRoute],
         );
-        final result = routeFinder.findForPath("/a", shouldBackToParent: false);
+        final result = routeFinder.findForPath("/a", shouldBackToCaller: false);
         expect(result, TestHelper.createRouterPaths([startRoute, aRoute]));
       });
 
@@ -725,7 +725,7 @@ void main() {
         );
         final result = routeFinder.findForPath(
           "/a/b",
-          shouldBackToParent: false,
+          shouldBackToCaller: false,
         );
         expect(
           result,
@@ -741,7 +741,7 @@ void main() {
         );
         final result = routeFinder.findForPath(
           "/a/b/c",
-          shouldBackToParent: false,
+          shouldBackToCaller: false,
         );
         expect(
           result,
@@ -758,7 +758,7 @@ void main() {
           );
           final result = routeFinder.findForPath(
             "/a/b/c",
-            shouldBackToParent: false,
+            shouldBackToCaller: false,
           );
           expect(
             result,
@@ -774,7 +774,7 @@ void main() {
           );
           final result = routeFinder.findForPath(
             "/",
-            shouldBackToParent: false,
+            shouldBackToCaller: false,
           );
           expect(
             result,
@@ -811,7 +811,7 @@ void main() {
           );
           final result = routeFinder.findForPath(
             "/a",
-            shouldBackToParent: false,
+            shouldBackToCaller: false,
           );
           expect(
             result,

@@ -76,16 +76,16 @@ bool _setupInheritedAppRouterChange({
   required AppRouter oldAppRouter,
   required AppRouter newAppRouter,
 }) {
-  final oldInheritedGoRouter = InheritedAppRouter(
+  final oldInheritedAppRouter = InheritedAppRouter(
     appRouter: oldAppRouter,
     child: Container(),
   );
-  final newInheritedGoRouter = InheritedAppRouter(
+  final newInheritedAppRouter = InheritedAppRouter(
     appRouter: newAppRouter,
     child: Container(),
   );
-  return newInheritedGoRouter.updateShouldNotify(
-    oldInheritedGoRouter,
+  return newInheritedAppRouter.updateShouldNotify(
+    oldInheritedAppRouter,
   );
 }
 
