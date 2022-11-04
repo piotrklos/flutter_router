@@ -1,4 +1,5 @@
 import 'package:app_router/app_router.dart' as router;
+import 'package:example/app_router/interface/tab_bar_state.dart';
 
 import '../../pages/home/tab_bar_page.dart';
 import '../interface/app_router_bloc_provider.dart';
@@ -81,10 +82,19 @@ extension PBTabRouteExtension on PBTabRoute {
             ),
           )
           .toList(),
-      builder: (_, __, child) {
+      builder: (ctx, __, child) {
         return TabBarPage(
           child: child,
           items: items,
+          state: () {
+            final state = router.StatefulShellRoute.of(ctx);
+            return TabBarState(
+              currentIndex: state.currentIndex,
+              changeTab: (index, resetLocatiom) {
+                state.goToBranch(index, resetLocation: resetLocatiom);
+              },
+            );
+          }(),
         );
       },
       onPop: () {

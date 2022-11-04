@@ -1,27 +1,27 @@
-import 'package:app_router/app_router.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../app_router/interface/tab_bar_state.dart';
 import '../../app_router/interface/route.dart';
 
 class TabBarPage extends StatelessWidget {
   final Widget child;
   final List<PBTabRouteItem> items;
+  final TabBarState state;
 
   const TabBarPage({
     required this.child,
     required this.items,
+    required this.state,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   @override
   Widget build(BuildContext context) {
-    final shellState = StatefulShellRoute.of(context);
-
     return Column(
       children: [
         Expanded(child: child),
         CupertinoTabBar(
-          currentIndex: shellState.currentIndex,
+          currentIndex: state.currentIndex,
           iconSize: 16,
           items: items
               .map(
@@ -36,7 +36,6 @@ class TabBarPage extends StatelessWidget {
           onTap: (index) {
             _onItemTapped(
               context,
-              shellState,
               index,
             );
           },
@@ -47,13 +46,8 @@ class TabBarPage extends StatelessWidget {
 
   void _onItemTapped(
     BuildContext context,
-    StatefulShellRouteState shellRouteState,
     int index,
   ) {
-    if (shellRouteState.currentIndex == index) {
-      shellRouteState.goToBranch(index, resetLocation: true);
-    } else {
-      shellRouteState.goToBranch(index);
-    }
+    state.changeTab(index, state.currentIndex == index);
   }
 }
