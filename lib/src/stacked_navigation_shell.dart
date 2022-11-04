@@ -2,8 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'app_router_location.dart';
-import 'app_router_router.dart';
+import 'bloc_provider.dart';
+import 'location.dart';
+import 'app_router.dart';
 import 'typedef.dart';
 
 class StackedNavigationShell extends StatefulWidget {
@@ -118,12 +119,12 @@ class _StackedNavigationShellState extends State<StackedNavigationShell>
     required Widget child,
     required StackedNavigationItemState navigationItem,
   }) {
-    final providers = navigationItem.item.providers?.call() ?? [];
+    final providers = navigationItem.item.providers ?? [];
     if (providers.isEmpty) {
       return child;
     }
     return MultiBlocProvider(
-      providers: providers,
+      providers: providers.map((e) => e.blocProvider).toList(),
       child: child,
     );
   }
@@ -132,8 +133,7 @@ class _StackedNavigationShellState extends State<StackedNavigationShell>
 class StackedNavigationItem {
   final AppRouterLocation rootRouteLocation;
   final GlobalKey<NavigatorState> navigatorKey;
-  final ValueGetter<List<BlocProvider<StateStreamableSource<Object?>>>>?
-      providers;
+  final List<AppRouterBlocProvider>? providers;
 
   StackedNavigationItem({
     required this.rootRouteLocation,

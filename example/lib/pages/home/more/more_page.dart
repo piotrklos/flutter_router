@@ -4,6 +4,7 @@ import 'package:example/pages/start/start_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../app_router/interface/router.dart';
 import '../../../bloc/more/more_bloc.dart';
@@ -56,8 +57,9 @@ class MorePage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   PBAppNavigator.of(context).goNamed(StartPage.name);
+                  GetIt.instance.resetLazySingleton<MoreCubit>();
                 },
                 child: const Text("Log out"),
               ),

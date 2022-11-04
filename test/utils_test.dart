@@ -1,4 +1,4 @@
-import 'package:app_router/utils.dart';
+import 'package:app_router/src/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

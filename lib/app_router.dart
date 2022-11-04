@@ -1,12 +1,12 @@
 library app_router;
 
-export 'typedef.dart';
-export 'app_router_bloc_provider.dart';
-export 'app_router_cubit_provider.dart';
-export 'app_router_page_state.dart';
-export 'route.dart';
-export 'stacked_navigation_shell.dart';
-export 'app_router_bloc_provider.dart';
-export 'app_router_location.dart';
-export 'route_finder.dart';
-export 'app_router_router.dart';
+export 'src/typedef.dart';
+export 'src/bloc_provider.dart';
+export 'src/cubit_provider.dart';
+export 'src/page_state.dart';
+export 'src/route.dart';
+export 'src/stacked_navigation_shell.dart';
+export 'src/bloc_provider.dart';
+export 'src/location.dart';
+export 'src/route_finder.dart';
+export 'src/app_router.dart';

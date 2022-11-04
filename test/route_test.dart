@@ -1,8 +1,8 @@
-import 'package:app_router/app_router_bloc_provider.dart';
-import 'package:app_router/app_router_location.dart';
-import 'package:app_router/route.dart';
-import 'package:app_router/router_exception.dart';
-import 'package:app_router/stacked_navigation_shell.dart';
+import 'package:app_router/src/bloc_provider.dart';
+import 'package:app_router/src/location.dart';
+import 'package:app_router/src/route.dart';
+import 'package:app_router/src/router_exception.dart';
+import 'package:app_router/src/stacked_navigation_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -267,7 +267,7 @@ void main() {
           stackItems: [
             StackedNavigationItem(
               navigatorKey: GlobalKey(),
-              rootRouteLocation: AppRouterLocation(path: "", name: ""),
+              rootRouteLocation: const AppRouterLocation(path: "", name: ""),
             ),
           ],
           routes: const [],
@@ -290,7 +290,7 @@ void main() {
           stackItems: [
             StackedNavigationItem(
               navigatorKey: GlobalKey(),
-              rootRouteLocation: AppRouterLocation(path: "", name: ""),
+              rootRouteLocation: const AppRouterLocation(path: "", name: ""),
             ),
           ],
           routes: [
@@ -310,7 +310,7 @@ void main() {
         stackItems: [
           StackedNavigationItem(
             navigatorKey: GlobalKey(),
-            rootRouteLocation: AppRouterLocation(path: "", name: ""),
+            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
           ),
         ],
         routes: [pageRoute],
@@ -324,7 +324,7 @@ void main() {
         stackItems: [
           StackedNavigationItem(
             navigatorKey: key,
-            rootRouteLocation: AppRouterLocation(path: "", name: ""),
+            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
           ),
         ],
         routes: [pageRoute],
@@ -342,7 +342,7 @@ void main() {
         stackItems: [
           StackedNavigationItem(
             navigatorKey: GlobalKey(),
-            rootRouteLocation: AppRouterLocation(path: "", name: ""),
+            rootRouteLocation: const AppRouterLocation(path: "", name: ""),
           ),
         ],
         routes: [pageRoute],

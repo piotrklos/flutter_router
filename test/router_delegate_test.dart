@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import "package:app_router/app_router_router.dart";
-import "package:app_router/route.dart";
-import 'package:app_router/router_exception.dart';
+import "package:app_router/src/app_router.dart";
+import "package:app_router/src/route.dart";
+import 'package:app_router/src/router_exception.dart';
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 

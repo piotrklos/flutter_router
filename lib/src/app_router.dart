@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'app_router_cubit_provider.dart';
-import 'app_router_location.dart';
+import 'cubit_provider.dart';
+import 'location.dart';
 import 'configuration.dart';
 import 'information_parser.dart';
 import 'information_provider.dart';
@@ -63,10 +63,12 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
       errorBuilder: errorBuilder,
       observers: [...observers ?? [], this],
       restorationScopeId: restorationScopeId,
-      builderWithNavigator: (context, _, nav) => InheritedAppRouter(
-        appRouter: this,
-        child: nav,
-      ),
+      builderWithNavigator: (context, _, nav) {
+        return InheritedAppRouter(
+          appRouter: this,
+          child: nav,
+        );
+      },
     );
   }
 
@@ -135,7 +137,10 @@ class AppRouter extends ChangeNotifier with NavigatorObserver {
     return completer.future;
   }
 
-  Future<T?> pushNamed<T extends Object?>(String name, {Object? extra}) {
+  Future<T?> pushNamed<T extends Object?>(
+    String name, {
+    Object? extra,
+  }) {
     return push(_fullPathForName(name), extra: extra);
   }
 

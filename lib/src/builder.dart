@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'app_router_bloc_provider.dart';
-import 'app_router_builder_helper.dart';
-import 'app_router_location.dart';
-import 'app_router_page_state.dart';
+import 'bloc_provider.dart';
+import 'builder_helper.dart';
+import 'location.dart';
+import 'page_state.dart';
 import 'configuration.dart';
 import 'route.dart';
 import 'route_finder.dart';
@@ -40,23 +40,11 @@ class AppRouterBuilder {
       return const SizedBox.shrink();
     }
     try {
-      return _builderWithNavigator(
-        context,
-        AppRouterPageState(
-          name: null,
-          fullpath: routerPaths.location!.path,
-        ),
-        _buildNavigator(
-          onPop: onPop,
-          pages: _buildPagesList(
-            context: context,
-            routerPaths: routerPaths,
-            onPop: onPop,
-            navigatorKey: _configuration.globalNavigatorKey,
-          ),
-          navigatorKey: _configuration.globalNavigatorKey,
-          observers: observers,
-        ),
+      return tryBuild(
+        context: context,
+        navigatorKey: _configuration.globalNavigatorKey,
+        onPop: onPop,
+        routerPaths: routerPaths,
       );
     } on _AppRouterRouteBuilderError catch (e) {
       return _buildNavigatorOnlyWithError(
@@ -67,6 +55,37 @@ class AppRouterBuilder {
         onPop: onPop,
       );
     }
+  }
+
+  @visibleForTesting
+  Widget tryBuild({
+    required BuildContext context,
+    required RouterPaths routerPaths,
+    required ValueSetter<dynamic> onPop,
+    required GlobalKey<NavigatorState> navigatorKey,
+  }) {
+    return _builderWithNavigator(
+      context,
+      AppRouterPageState(
+        name: null,
+        fullpath: routerPaths.location!.path,
+      ),
+      Builder(
+        builder: (ctx) {
+          return _buildNavigator(
+            onPop: onPop,
+            pages: _buildPagesList(
+              context: ctx,
+              routerPaths: routerPaths,
+              onPop: onPop,
+              navigatorKey: navigatorKey,
+            ),
+            navigatorKey: navigatorKey,
+            observers: observers,
+          );
+        },
+      ),
+    );
   }
 
   List<Page> _buildPagesList({
@@ -329,7 +348,9 @@ class AppRouterBuilder {
       if (route.providers.isNotEmpty) {
         buildedChild = MultiBlocProvider(
           providers: route.providers.map((e) => e.blocProvider).toList(),
-          child: route.builder(context, state),
+          child: Builder(builder: (blocContext) {
+            return route.builder(blocContext, state);
+          }),
         );
       } else {
         buildedChild = route.builder(context, state);

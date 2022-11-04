@@ -1,44 +1,49 @@
 import 'dart:async';
 
-import 'package:app_router/app_router_bloc_provider.dart';
-import 'package:app_router/app_router_location.dart';
-import 'package:app_router/route.dart';
-import 'package:app_router/stacked_navigation_shell.dart';
-import 'package:app_router/typedef.dart';
+import 'package:app_router/src/bloc_provider.dart';
+import 'package:app_router/src/location.dart';
+import 'package:app_router/src/route.dart';
+import 'package:app_router/src/stacked_navigation_shell.dart';
+import 'package:app_router/src/typedef.dart';
 import 'package:flutter/material.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MockStartPageCubit extends Mock implements AppRouterBlocProvider {}
+class MockCubitState {}
 
-class MockAppPage1Cubit extends Mock implements AppRouterBlocProvider {}
+class _SampleCubit<T extends BlocBase> extends Cubit<MockCubitState>
+    with AppRouterBlocProvider<T> {
+  _SampleCubit() : super(MockCubitState());
+}
 
-class MockAppPage2Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage1Cubit extends _SampleCubit<TestAppPage1Cubit> {}
 
-class MockAppPage3Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage2Cubit extends _SampleCubit<TestAppPage2Cubit> {}
 
-class MockTab1Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage3Cubit extends _SampleCubit<TestAppPage3Cubit> {}
 
-class MockTab2Cubit extends Mock implements AppRouterBlocProvider {}
+class TestTab1Cubit extends _SampleCubit<TestTab1Cubit> {}
 
-class MockTab3Cubit extends Mock implements AppRouterBlocProvider {}
+class TestTab2Cubit extends _SampleCubit<TestTab2Cubit> {}
 
-class MockTab12Cubit extends Mock implements AppRouterBlocProvider {}
+class TestTab3Cubit extends _SampleCubit<TestTab3Cubit> {}
 
-class MockTab23Cubit extends Mock implements AppRouterBlocProvider {}
+class TestTab12Cubit extends _SampleCubit<TestTab12Cubit> {}
 
-class MockTabCubit extends Mock implements AppRouterBlocProvider {}
+class TestTab23Cubit extends _SampleCubit<TestTab23Cubit> {}
 
-class MockAppPage1Child1Cubit extends Mock implements AppRouterBlocProvider {}
+class TestTabCubit extends _SampleCubit<TestTabCubit> {}
 
-class MockAppPage1Child2Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage1Child1Cubit extends _SampleCubit<TestAppPage1Child1Cubit> {}
 
-class MockAppPage2Child1Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage1Child2Cubit extends _SampleCubit<TestAppPage1Child2Cubit> {}
 
-class MockAppPage2Child2Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage2Child1Cubit extends _SampleCubit<TestAppPage2Child1Cubit> {}
 
-class MockAppPage3Child1Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage2Child2Cubit extends _SampleCubit<TestAppPage2Child2Cubit> {}
 
-class MockAppPage3Child2Cubit extends Mock implements AppRouterBlocProvider {}
+class TestAppPage3Child1Cubit extends _SampleCubit<TestAppPage3Child1Cubit> {}
+
+class TestAppPage3Child2Cubit extends _SampleCubit<TestAppPage3Child2Cubit> {}
 
 class SampleRoutes {
   static StreamController<String>? _controller =
@@ -53,11 +58,6 @@ class SampleRoutes {
   static clearStreamController() {
     _controller = null;
   }
-
-  static final List<BaseAppRoute> sampleAppRouteWithStackedNavigation = [
-    startRoute,
-    shellRoute,
-  ];
 
   static final shellRoute = MultiShellRoute.stackedNavigationShell(
     routes: [
@@ -75,10 +75,10 @@ class SampleRoutes {
           name: routePage1.name,
           path: routePage1.path,
         ),
-        providers: () => [
-          MockTab1Cubit().blocProvider,
-          MockTab12Cubit().blocProvider,
-          MockTabCubit().blocProvider,
+        providers: [
+          TestTab1Cubit(),
+          TestTab12Cubit(),
+          TestTabCubit(),
         ],
       ),
       StackedNavigationItem(
@@ -87,11 +87,11 @@ class SampleRoutes {
           name: routePage2.name,
           path: routePage2.path,
         ),
-        providers: () => [
-          MockTab2Cubit().blocProvider,
-          MockTab12Cubit().blocProvider,
-          MockTab23Cubit().blocProvider,
-          MockTabCubit().blocProvider,
+        providers: [
+          TestTab2Cubit(),
+          TestTab12Cubit(),
+          TestTab23Cubit(),
+          TestTabCubit(),
         ],
       ),
       StackedNavigationItem(
@@ -100,27 +100,12 @@ class SampleRoutes {
           name: routePage3.name,
           path: routePage3.path,
         ),
-        providers: () => [
-          MockTab3Cubit().blocProvider,
-          MockTab23Cubit().blocProvider,
-          MockTabCubit().blocProvider,
+        providers: [
+          TestTab3Cubit(),
+          TestTab23Cubit(),
+          TestTabCubit(),
         ],
       ),
-    ],
-  );
-
-  static final startRoute = _MockAppPageRoute(
-    path: "/",
-    name: "startRoute",
-    builder: (_, __) => Container(),
-    providersBuilder: (_) {
-      return [
-        MockStartPageCubit(),
-      ];
-    },
-    routes: [
-      routePage1,
-      routePage2,
     ],
   );
 
@@ -130,7 +115,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage1Cubit(),
+        TestAppPage1Cubit(),
       ];
     },
     routes: [
@@ -145,7 +130,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage1Child1Cubit(),
+        TestAppPage1Child1Cubit(),
       ];
     },
     routes: [
@@ -165,7 +150,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage1Child2Cubit(),
+        TestAppPage1Child2Cubit(),
       ];
     },
   );
@@ -176,7 +161,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage2Cubit(),
+        TestAppPage2Cubit(),
       ];
     },
     routes: [
@@ -191,7 +176,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage2Child1Cubit(),
+        TestAppPage2Child1Cubit(),
       ];
     },
   );
@@ -202,7 +187,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage2Child2Cubit(),
+        TestAppPage2Child2Cubit(),
       ];
     },
   );
@@ -213,7 +198,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage3Cubit(),
+        TestAppPage3Cubit(),
       ];
     },
     routes: [
@@ -228,7 +213,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage3Child1Cubit(),
+        TestAppPage3Child1Cubit(),
       ];
     },
   );
@@ -239,7 +224,7 @@ class SampleRoutes {
     builder: (_, __) => Container(),
     providersBuilder: (_) {
       return [
-        MockAppPage3Child2Cubit(),
+        TestAppPage3Child2Cubit(),
       ];
     },
   );

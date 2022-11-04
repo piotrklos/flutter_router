@@ -1,5 +1,5 @@
 import 'package:app_router/app_router.dart';
-import "package:app_router/information_parser.dart";
+import "package:app_router/src/information_parser.dart";
 import 'package:equatable/equatable.dart';
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";

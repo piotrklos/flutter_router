@@ -1,6 +1,6 @@
-import 'package:app_router/app_router_router.dart';
-import 'package:app_router/context_extension.dart';
-import 'package:app_router/inherited_router.dart';
+import 'package:app_router/src/app_router.dart';
+import 'package:app_router/src/context_extension.dart';
+import 'package:app_router/src/inherited_router.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -4,8 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-import 'app_router_bloc_provider.dart';
-import 'app_router_location.dart';
+import 'bloc_provider.dart';
+import 'location.dart';
 import 'configuration.dart';
 import 'route.dart';
 import 'router_exception.dart';
@@ -41,20 +41,14 @@ class RouteFinder {
     required SkipOption skipOption,
     required int index,
   }) {
-    if (routerPaths.length < index) {
-      throw AppRouterException("Router paths must be greater than index!");
-    }
     final foundRoute = routerPaths.routeForIndex(index);
     if (foundRoute == null) {
-      throw AppRouterException("Could not find route for index!");
+      throw AppRouterException("Could not find route for index: $index!");
     }
-    if (routerPaths.length - 1 > index) {
+    if (index > 0 && routerPaths.length - 1 > index) {
       final newPaths = routerPaths._routes.whereNot(
         (e) => e == foundRoute,
       );
-      if (newPaths.isEmpty) {
-        throw AppRouterException("New paths can not be empty!");
-      }
       return RouterPaths(
         newPaths.toList(),
       );
@@ -102,11 +96,15 @@ class RouteFinder {
     required Object? extra,
     required Completer? completer,
   }) {
+    String correctPath = path;
+    if (path.endsWith("/") && path.length > 1) {
+      correctPath = path.substring(0, path.length - 1);
+    }
     final routes = _getRouteRecursively(
-      targetLocation: path,
+      targetLocation: correctPath,
       routes: _configuration.topLevelRoutes,
       parentFullPath: '',
-      remainPathToCheck: path,
+      remainPathToCheck: correctPath,
       extra: extra,
       completer: completer,
     );
@@ -172,7 +170,7 @@ class RouteFinder {
           newParentFullPath = foundRoute.fullPath;
         }
 
-        final subRouteMatch = _getRouteRecursively(
+        final subRouteRoutes = _getRouteRecursively(
           targetLocation: targetLocation,
           routes: route.routes,
           parentFullPath: newParentFullPath,
@@ -181,10 +179,10 @@ class RouteFinder {
           completer: completer,
         ).toList();
 
-        if (subRouteMatch.isEmpty) {
+        if (subRouteRoutes.isEmpty) {
           continue;
         }
-        result.add([foundRoute, ...subRouteMatch]);
+        result.add([foundRoute, ...subRouteRoutes]);
       }
       break;
     }
@@ -274,6 +272,10 @@ class RouterPaths extends Equatable {
   }
 
   FoundRoute popLast() {
+    if (_routes.isEmpty) {
+      throw AppRouterException("You can not pop page off on the empty stack!");
+    }
+
     final removed = _routes.removeLast();
 
     if (_routes.isEmpty) {

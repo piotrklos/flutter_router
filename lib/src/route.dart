@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-import 'app_router_bloc_provider.dart';
+import 'bloc_provider.dart';
 import 'router_exception.dart';
 import 'stacked_navigation_shell.dart';
 import 'typedef.dart';
@@ -48,11 +48,6 @@ class AppPageRoute extends BaseAppRoute {
   final VoidCallback? _onPop;
   final VoidCallback? _onPush;
 
-  @visibleForTesting
-  void addTempProvidersList(List<AppRouterBlocProvider> providers) {
-    _tempProvidersList.addAll(providers);
-  }
-
   List<AppRouterBlocProvider> get providers {
     return _tempProvidersList;
   }
@@ -80,6 +75,16 @@ class AppPageRoute extends BaseAppRoute {
           name: name,
         );
 
+  @visibleForTesting
+  void addTempProvidersList(List<AppRouterBlocProvider> providers) {
+    _tempProvidersList.addAll(providers);
+  }
+
+  @visibleForTesting
+  void clearProviders() {
+    _tempProvidersList.clear();
+  }
+
   void onPush(AppRouteProvidersBuilder cubitGetter) {
     _onPush?.call();
     if (_tempProvidersList.isNotEmpty) {
@@ -102,10 +107,10 @@ class AppPageRoute extends BaseAppRoute {
   /// /test2/details contained /test -> false
   /// Go_router use RegExp for that
   bool isContained(String route) {
-    if (path == route) {
+    if (path.toLowerCase() == route.toLowerCase()) {
       return true;
     }
-    final isStart = route.startsWith(path);
+    final isStart = route.toLowerCase().startsWith(path.toLowerCase());
     if (!isStart) {
       return false;
     }
@@ -187,9 +192,11 @@ class ShellRoute extends ShellRouteBase {
 
 class MultiShellRoute extends ShellRouteBase {
   final List<GlobalKey<NavigatorState>> navigatorKeys;
+  final List<StackedNavigationItem> _stackItems;
 
   MultiShellRoute._({
     required this.navigatorKeys,
+    required List<StackedNavigationItem> stackItems,
     required ShellRouteBuilder builder,
     required List<BaseAppRoute> routes,
     required VoidCallback? onPop,
@@ -198,6 +205,7 @@ class MultiShellRoute extends ShellRouteBase {
           navigatorKeys.length == routes.length,
           "Navigator keys length must be exactly the same as routes length",
         ),
+        _stackItems = stackItems,
         super._(
           routes: routes,
           builder: builder,
@@ -223,6 +231,7 @@ class MultiShellRoute extends ShellRouteBase {
   }) {
     return MultiShellRoute._(
       routes: routes,
+      stackItems: stackItems,
       navigatorKeys: stackItems.map((e) => e.navigatorKey).toList(),
       onPop: onPop,
       builder: (context, state, child) {
@@ -246,6 +255,16 @@ class MultiShellRoute extends ShellRouteBase {
     }
     final int routeIndex = routes.indexOf(baseRoute);
     return navigatorKeys[routeIndex];
+  }
+
+  @override
+  void onPop() {
+    for (final item in _stackItems) {
+      item.providers?.forEach((bloc) {
+        bloc.close();
+      });
+    }
+    super.onPop();
   }
 
   @override

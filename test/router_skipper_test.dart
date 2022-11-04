@@ -1,9 +1,9 @@
-import 'package:app_router/configuration.dart';
-import 'package:app_router/route.dart';
-import 'package:app_router/route_finder.dart';
-import 'package:app_router/router_exception.dart';
-import 'package:app_router/router_skipper.dart';
-import 'package:app_router/typedef.dart';
+import 'package:app_router/src/configuration.dart';
+import 'package:app_router/src/route.dart';
+import 'package:app_router/src/route_finder.dart';
+import 'package:app_router/src/router_exception.dart';
+import 'package:app_router/src/router_skipper.dart';
+import 'package:app_router/src/typedef.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

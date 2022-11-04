@@ -1,7 +1,7 @@
-import 'package:app_router/app_router_page_state.dart';
-import 'package:app_router/configuration.dart';
-import 'package:app_router/route.dart';
-import 'package:app_router/router_exception.dart';
+import 'package:app_router/src/page_state.dart';
+import 'package:app_router/src/configuration.dart';
+import 'package:app_router/src/route.dart';
+import 'package:app_router/src/router_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

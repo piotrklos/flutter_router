@@ -124,10 +124,10 @@ extension PBTabRouteItemExtension on PBTabRouteItem {
       navigatorKey: navigatorKey,
       providers: () {
         if (withProviderBuilder) {
-          return providers?.call().map((e) => e.blocProvider).toList() ?? [];
+          return providers?.call() ?? [];
         }
-        return [];
-      },
+        return <router.AppRouterBlocProvider>[];
+      }(),
     );
   }
 }

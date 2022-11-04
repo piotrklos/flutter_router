@@ -1,4 +1,4 @@
-import 'package:app_router/app_router_bloc_provider.dart';
+import 'package:app_router/src/bloc_provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

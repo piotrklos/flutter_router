@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import 'app_router_page_state.dart';
+import 'page_state.dart';
 import 'configuration.dart';
 import 'route.dart';
 import 'route_finder.dart';
